@@ -50,9 +50,9 @@ Irrlicht aims to solve exactly this problem.
   
 * ### What's unique
   Cross version cheating usually causes a lot of problems, Irrlicht solves them all and automizies the tedious process of making your cheat compatible for each version.
-  * Other solutions: <br/>
+  * #### Other solutions: <br/>
   Currently there are two public solutions to tackle this problem. One of which involves deobfuscating the whole source code and a loss of      cross version compatibility is the result (without putting some manual effort into making it compatible with the next version). And even if this effort is put into the project, there is a high probability that it won’t be compatible with desired mods for the game.<br/><br/> Another solution is to use some sort of modloader, a middle man, if you will. This results in it being pretty useless to obfuscate your client since you can see all of the api calls. There will **STILL** be compatibility issues with mods that decide to use another modloader or maybe don't use a modloader at all. If you wanted to switch from one to another you are going to face all kinds of problems. Then there is also the fact that the creator has to manually update his mod for it to be compatible with newer versions. This results in you being unable to cheat in snapshot versions of the game. These are a very desirable target for cheaters since there is no public snapshot-server that uses    any kind of anticheat.
-  * My solution: <br/>
+  * #### My solution: <br/>
   
 
 ### I don't get it
