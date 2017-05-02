@@ -170,13 +170,14 @@ public void t_()
 Modules are the different kinds of cheats that you can enable.
 
 ```java
-@ModuleInfo(name = "ExampleSpeed",
+@ModuleInfo(name = "Speed",
             category = Category.MOVEMENT)
-public class ExampleSpeed extends Module
+public class Speed extends Module
 {
    @ValueTarget
    private SliderValue<Double> speed = new SliderValue<>(this, "Speed", 2d, 1d, 10d, 0.1d);
 
+   @EventTarget
    public void onUpdate(UpdateEvent event)
    {
       final PlayerSp player = Irrlicht.getMinecraft().getPlayer();
