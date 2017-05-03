@@ -2,7 +2,7 @@
 
 > Your cross-version cheating champ
 
-Irrlicht is an easy to use cheat base which aims to make cross-version cheating attractive by automazing the tedious process of making it compatible for each version.
+*Irrlicht* is an easy to use cheat base which aims to make cross-version cheating attractive by automating the tedious process of making it compatible for each version.
 
 ## Index
 * What it does
@@ -16,7 +16,7 @@ Irrlicht is an easy to use cheat base which aims to make cross-version cheating 
 * Getting started
   * Mapper
     * Wrappers
-    * CustomHandlers
+    * Custom Handlers
   * Hooker
   * Modules
 * Built with
@@ -28,13 +28,13 @@ Irrlicht is an easy to use cheat base which aims to make cross-version cheating 
 
 ## What it does
 
-Irrlicht recognises logic and structure in obfuscated classes, makes them easily accessible and enables you to inject your personal cheating-desires. 
+*Irrlicht* recognises logic and structure in obfuscated classes, makes them easily accessible and enables you to inject your personal cheating-desires. 
 
 ### Explain it to me
 
-The game is obfuscated. Therefore it makes it difficult to access data structures or invoke methods reliably. Not only that but the games fields, methods and classes change with each version so even if you manage to access those, they will change their names in the next version.
+The game is obfuscated. Therefore, it is difficult to access data structures or invoke methods reliably. Not only that but the game's fields, methods and classes change their names with each version.
 
-Irrlicht aims to solve exactly this problem.
+*Irrlicht* aims to solve exactly this problem.
 
 * ### What it is
 
@@ -48,11 +48,11 @@ Irrlicht aims to solve exactly this problem.
   - It infiltrates and modifies the targeted client thereby adding it's own set of logic.
   
 * ### What's unique
-  Cross version cheating usually causes a lot of problems, Irrlicht solves them all and automizies the tedious process of making your cheat compatible for each version.
+  Cross version cheating usually causes a lot of problems, *Irrlicht* solves them all and automates the tedious process of making your cheat compatible with each version.
   * #### Other solutions: <br/>
-  Currently there are two public solutions to tackle this problem. One of which involves deobfuscating the whole source code and a loss of      cross version compatibility is the result (without putting some manual effort into making it compatible with the next version). And even if this effort is put into the project, there is a high probability that it won’t be compatible with desired mods for the game.<br/><br/> Another solution is to use some sort of modloader, a middle man, if you will. This results in it being pretty useless to obfuscate your client since you can see all of the api calls. There will **STILL** be compatibility issues with mods that decide to use another modloader or maybe don't use a modloader at all. If you wanted to switch from one to another you are going to face all kinds of problems. Then there is also the fact that the creator has to manually update his mod for it to be compatible with newer versions. This results in you being unable to cheat in snapshot versions of the game. These are a very desirable target for cheaters since there is no public snapshot-server that uses    any kind of anticheat.
+  Currently there are two public solutions to tackle this problem. One of which involves deobfuscating the whole source code. A loss of cross version compatibility is the result (without putting some extra effort into making it compatible with the next version). And even if this effort is put into the project, there is a high probability that it won’t be compatible with desired mods for the game.<br/><br/> Another solution is to use some sort of modloader, a middle man, if you will. This results in it being rather useless to obfuscate your client since you can see all of the API calls. There will **STILL** be compatibility issues with mods that decide to use another modloader or maybe don't use a modloader at all. If one wanted to switch from one to another one was going to face all kinds of problems. Then there is also the issue that the creator has to manually update his mod for it to be compatible with newer versions. This results in you being unable to cheat in snapshot versions of the game. These are a very desirable target for cheaters since there is no public snapshot-server that uses any kind of anticheat.
   * #### My solution: <br/>
-  The idea of creating a very different cheating solution ended up in Irrlicht. I tried to make sure that my solution was something rather special. I solved the problem of losing cross-version compatibility by wrapping the source code and creating a proxy that forwards the calls to the obfuscated classes:
+  The idea of creating a very different cheating solution ended up in *Irrlicht*. I tried to make sure that my solution was something rather special. I solved the problem of losing cross-version compatibility by wrapping the source code and creating a proxy that forwards the calls to the obfuscated classes:
   
   
   <p align="center">
@@ -61,7 +61,7 @@ Irrlicht aims to solve exactly this problem.
 
 ### I don't get it
 
-As mentioned before, Irrlicht rather analyses static structure than wonky names.
+As mentioned before, *Irrlicht* rather analyses static structure than wonky names.
 
 The example below shows the difference between an older version of the game and a newer one: 
 
@@ -69,34 +69,36 @@ The example below shows the difference between an older version of the game and 
 - public abstract class pk implements m
 + public abstract class sn implements n
 {
+...
 -   public double p;
 +   public double m;
 -   public double q;
 +   public double n;
 -   public double r;
 +   public double o;
+...
 }
 ```
 
-The structure stays the same but the names change, here is where Irrlicht comes into play.
-It analyses the structure you give it and tries to find this pattern within the obfuscated classes.
+The structure stays the same but the names change, here is where *Irrlicht* comes into play.
+It analyses the given structure and tries to find this pattern within the obfuscated classes.
 
-Irrlicht will then through [`Wrapper`](https://github.com/nur1popcorn/Irrlicht)s make this code accessible to you.
+*Irrlicht* will then through [`Wrapper`](https://github.com/nur1popcorn/Irrlicht)s make this code accessible to you.
 
 Still don't get it?<br/>
 Well, too bad for you. Go somewhere else.<br/>
-Just kidding you can contact me [here](https://github.com/nur1popcorn/Irrlicht) and i will try my best to explain it to you.
+Just kidding you can contact me [here](https://github.com/nur1popcorn/Irrlicht) and I will try my best to explain it to you.
 
 ## Features
-The most important characteristics of Irrlicht are:
+The most important characteristics of *Irrlicht* are:
 - Quality
 - Cross version compatibility  "write it once, use it always"
-- Easy usability while maintaining a high level of customize-ability
+- Easy usability while maintaining a high level of customizability
 - High probability for mod support
 
 ## Getting started
 
-Now its time to enter the playground. These few guides will give you some advice on the more basic stuff:
+Now its time to enter the playground. These few guides will give you some advice on the basics stuff:
 
 ### Mapper
 
@@ -105,7 +107,7 @@ The mapper is responsible for creating and storing the mappings for all of the r
 * ### Wrappers
   In order to create a new wrapper you have to create an interface and extend [`Wrapper`](https://github.com/nur1popcorn/Irrlicht). Then you will have to add a discovery method to the wrapper. This will tell the [`Mapper`](https://github.com/nur1popcorn/Irrlicht) how the class is supposed to be obtained. I suggest looking at the documation of the mapper's class as it shows all of the default ways of obtaining a class. If this doesn't float your boat I suggest telling the mapper to use your custom check and attaching it to the class.
   
-  *Note:* Some of the checks will require you to add some additonal information to the [`DiscoveryMethod`](https://github.com/nur1popcorn/Irrlicht).
+  *Note:* Some of the checks will require you to add some additional information to the [`DiscoveryMethod`](https://github.com/nur1popcorn/Irrlicht).
   
   ```java
   @DiscoveryMethod(checks = Mapper.CUSTOM,
@@ -120,7 +122,7 @@ The mapper is responsible for creating and storing the mappings for all of the r
      ...
   }
   ```
-* ### CustomHandlers
+* ### Custom Handlers
  If you are not happy with any of the default ways I provide to obtain a class or a method you may define a custom [`DiscoveryHandler`](https://github.com/nur1popcorn/Irrlicht):
  
  ```java
@@ -132,7 +134,7 @@ The mapper is responsible for creating and storing the mappings for all of the r
 
 ### Hooker
 
-The [`Hooker`](https://github.com/nur1popcorn/Irrlicht) is responsible for hooking all of the registered events. In order to use it all you have to do is create a event class and attach it to a wrapper.
+The [`Hooker`](https://github.com/nur1popcorn/Irrlicht) is responsible for hooking all of the registered events. In order to use it, all one has to do is create an event class and attach it to a wrapper.
 
 ```java
     @HookingMethod(value = UpdateEvent.class,
@@ -167,7 +169,7 @@ public void t_()
 
 ### Modules
 
-Modules are the different kinds of cheats that you can enable.
+Modules are the different kinds of cheats that can be enabled.
 
 ```java
 @ModuleInfo(name = "Speed",
@@ -187,20 +189,21 @@ public class Speed extends Module
 }
 ```
 
-All you would have to do now is create an instance of your class and register it in the [`ModuleManager`](https://github.com/nur1popcorn/Irrlicht).
+All one would have to do now is to create an instance of your class and register it in the [`ModuleManager`](https://github.com/nur1popcorn/Irrlicht).
 
 ## Built with
-- [Maven](https://maven.apache.org/) - Dependency Management.
-- [ASM](http://asm.ow2.org/) - Bytecode manipulation.
-- [JavaAssist](http://jboss-javassist.github.io/javassist/) - I pretty much only use this libary to generate proxies for concrete classes. (Which isnt to diffcult hence i am thinking about booting this one..)
+- [Maven](https://maven.apache.org/) - Dependency Management
+- [ASM](http://asm.ow2.org/) - Bytecode manipulation
+- [JavaAssist](http://jboss-javassist.github.io/javassist/) - I pretty much only use this libary to generate proxies for concrete classes (Which isn't to difficult hence I am thinking about booting this one...)
 
 ## Release history
 * 1.0.0-alpha
-  * Inital commit.
-## Contributing
-*NOTE:* **DO NOT** contribute to the gui as i am currently rewriting big portions of it.<br/>
+  * Initial commit.
 
-Other than that just create a new pull request.
+## Contributing
+*NOTE:* **DO NOT** contribute to the gui as I am currently rewriting big portions of it.<br/>
+
+Other than that, just create a new pull request.
 
 ## Authors
 - **nur1popcorn** *(Hackerman)* - *Inital work*
