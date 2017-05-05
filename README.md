@@ -105,6 +105,8 @@ Now its time to enter the playground. These few guides will give you some advice
 The mapper is responsible for creating and storing the mappings for all of the registered wrappers.
 
 * ### Wrappers
+  [`Wrapper`](https://github.com/nur1popcorn/Irrlicht)s are a way of making the obfuscated classes easily accessible.
+  
   In order to create a new wrapper you have to create an interface and extend [`Wrapper`](https://github.com/nur1popcorn/Irrlicht). Then you will have to add a discovery method to the wrapper. This will tell the [`Mapper`](https://github.com/nur1popcorn/Irrlicht) how the class is supposed to be obtained. I suggest looking at the documation of the mapper's class as it shows all of the default ways of obtaining a class. If this doesn't float your boat I suggest telling the mapper to use your custom check and attaching it to the class.
   
   *Note:* Some of the checks will require you to add some additional information to the [`DiscoveryMethod`](https://github.com/nur1popcorn/Irrlicht).
@@ -172,20 +174,28 @@ public void t_()
 Modules are the different kinds of cheats that can be enabled.
 
 ```java
-@ModuleInfo(name = "Speed",
+@ModuleInfo(name = "Fly",
             category = Category.MOVEMENT)
-public class Speed extends Module
+public class Fly extends Module
 {
-   @ValueTarget
-   private SliderValue<Double> speed = new SliderValue<>(this, "Speed", 2d, 1d, 10d, 0.1d);
+    @Override
+    public void onDisable()
+    {
+        super.onDisable();
+        Irrlicht.getMinecraft()
+                .getPlayer()
+                .getPlayerAbilities()
+                .setFlying(false);
+    }
 
-   @EventTarget
-   public void onUpdate(UpdateEvent event)
-   {
-      final PlayerSp player = Irrlicht.getMinecraft().getPlayer();
-      player.setMotionX(player.getMotionX() * speed.value);
-      player.setMotionZ(player.getMotionZ() * speed.value);
-   }
+    @EventTarget
+    public void onUpdate(UpdateEvent event)
+    {
+        Irrlicht.getMinecraft()
+                .getPlayer()
+                .getPlayerAbilities()
+                .setFlying(true);
+    }
 }
 ```
 
@@ -195,6 +205,7 @@ All one would have to do now is to create an instance of your class and register
 - [Maven](https://maven.apache.org/) - Dependency Management
 - [ASM](http://asm.ow2.org/) - Bytecode manipulation
 - [JavaAssist](http://jboss-javassist.github.io/javassist/) - I pretty much only use this libary to generate proxies for concrete classes (Which isn't to difficult hence I am thinking about booting this one...)
+- JavaFx :)
 
 ## Release history
 * 1.0.0-alpha
