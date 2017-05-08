@@ -1,0 +1,105 @@
+.window-border {
+    -fx-background-color: #1b1b1b;
+}
+
+.window-border .label {
+    -fx-font: 12px Helvetica;
+    -fx-text-fill: #b4b4b4;
+}
+
+.window-border .button {
+    -fx-background-color: #1b1b1b;
+    -fx-border-color: #1b1b1b;
+}
+
+.root-element, .log-output {
+    -fx-background-color: #202020;
+    -fx-border-color: linear-gradient(transparent, #32739B);
+    -fx-border-width: 1;
+}
+
+.log-output-container, log-output {
+    -fx-border-color: linear-gradient(transparent, #32739B);
+    -fx-border-width: 1;
+}
+
+.scroll-bar:horizontal .thumb {
+    -fx-background-color: #101010,
+                          linear-gradient(to bottom, #404040, #323232),
+                          linear-gradient(to bottom, #404040, #323232);
+    -fx-border-radius: 3 3 3 3;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #101010,
+                          linear-gradient(to right, #404040, #323232),
+                          linear-gradient(to right, #404040, #323232);
+    -fx-border-radius: 3 3 3 3;
+}
+
+.scroll-bar, .track, .increment-button, .decrement-button, .corner {
+    -fx-background-color: #202020;
+    -fx-border-color: #202020;
+}
+
+.log-output .list-cell:odd {
+    -fx-background-color: #1f1f1f;
+}
+
+.log-output .list-cell:even {
+    -fx-background-color: #202020;
+}
+
+.log-output .list-cell:filled:hover {
+    -fx-background-color: #252525;
+}
+
+.log-output .list-cell:info {
+    -fx-text-fill: #b4b4b4;
+}
+
+.log-output .list-cell:warning {
+    -fx-text-fill: yellow;
+}
+
+.log-output .list-cell:severe {
+    -fx-text-fill: red;
+}
+
+.button, .toggle-button, .combo-box, .text-field {
+    -fx-background-color: linear-gradient(#404040, #323232);
+    -fx-border-color: #101010;
+    -fx-border-radius: 3 3 3 3;
+    -fx-text-fill: #dcdcdc;
+    -fx-font-family: "Helvetica";
+}
+
+.button .text, .toggle-button .text, .combo-box .text, .label {
+    -fx-effect: dropshadow(gaussian, #101010, 0, 0, 0, 1);
+    -fx-text-fill: white;
+    -fx-fill: white;
+}
+
+.button:hover, .toggle-button:hover {
+    -fx-background-color: linear-gradient(#505050, #424242);
+}
+
+.button:pressed, .toggle-button:pressed {
+    -fx-background-color: linear-gradient(#303030, #222222);
+}
+
+.toggle-button:selected {
+    -fx-background-color: linear-gradient(#545454, #424242);
+}
+
+.combo-box .list-view {
+    -fx-background-color: #222222;
+}
+
+.combo-box .list-view .list-cell {
+    -fx-background-color: #323232;
+}
+
+.combo-box .list-view .list-cell:hover {
+    -fx-background-color: #424242;
+}

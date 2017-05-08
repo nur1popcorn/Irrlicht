@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Main-Class: com.nur1popcorn.irrlicht.launcher.Main
+Agent-Class: com.nur1popcorn.irrlicht.Agent
+Can-Retransform-Classes: true
+Can-Redefine-Classes: true
+Class-Path: tools.jar
