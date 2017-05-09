@@ -19,9 +19,9 @@
 
 package com.nur1popcorn.irrlicht.modules.impl.combat;
 
-import com.darkmagician6.eventapi.EventTarget;
 import com.nur1popcorn.irrlicht.Irrlicht;
-import com.nur1popcorn.irrlicht.engine.hooker.events.UpdateEvent;
+import com.nur1popcorn.irrlicht.engine.events.EventTarget;
+import com.nur1popcorn.irrlicht.engine.hooker.impl.UpdateEvent;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.Minecraft;
 import com.nur1popcorn.irrlicht.management.values.SliderValue;
 import com.nur1popcorn.irrlicht.management.values.ValueTarget;

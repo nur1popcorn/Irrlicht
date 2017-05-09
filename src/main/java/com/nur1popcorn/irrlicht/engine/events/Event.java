@@ -17,19 +17,20 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.engine.hooker.events;
-
-import com.darkmagician6.eventapi.events.Event;
+package com.nur1popcorn.irrlicht.engine.events;
 
 /**
- * The {@link Render3DEvent} is called when drawing.
+ * The {@link Event} is the base for every other {@link Event}.
  *
- * @see Event
+ * @see EventManager
  *
  * @author nur1popcorn
- * @since 1.0.0-alpha
+ * @since 1.0.1-alpha
  */
-public class Render3DEvent extends Event
+public interface Event
 {
-    //TODO: hook
+    default void call()
+    {
+        EventManager.call(this);
+    }
 }

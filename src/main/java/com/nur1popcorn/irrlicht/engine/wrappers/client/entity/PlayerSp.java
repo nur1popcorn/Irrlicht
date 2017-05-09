@@ -21,7 +21,7 @@ package com.nur1popcorn.irrlicht.engine.wrappers.client.entity;
 
 import com.nur1popcorn.irrlicht.engine.hooker.Hooker;
 import com.nur1popcorn.irrlicht.engine.hooker.HookingMethod;
-import com.nur1popcorn.irrlicht.engine.hooker.events.UpdateEvent;
+import com.nur1popcorn.irrlicht.engine.hooker.impl.UpdateEvent;
 import com.nur1popcorn.irrlicht.engine.mapper.DiscoveryMethod;
 import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.Minecraft;

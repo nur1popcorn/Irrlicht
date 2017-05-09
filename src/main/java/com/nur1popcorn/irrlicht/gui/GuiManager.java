@@ -19,10 +19,10 @@
 
 package com.nur1popcorn.irrlicht.gui;
 
-import com.darkmagician6.eventapi.EventManager;
-import com.darkmagician6.eventapi.EventTarget;
 import com.nur1popcorn.irrlicht.Irrlicht;
-import com.nur1popcorn.irrlicht.engine.hooker.events.UpdateEvent;
+import com.nur1popcorn.irrlicht.engine.events.EventManager;
+import com.nur1popcorn.irrlicht.engine.events.EventTarget;
+import com.nur1popcorn.irrlicht.engine.hooker.impl.UpdateEvent;
 import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
 import com.nur1popcorn.irrlicht.engine.mapper.WrapperDelegationHandler;
 import com.nur1popcorn.irrlicht.engine.wrappers.Wrapper;
@@ -449,7 +449,8 @@ public class GuiManager
     }
 
     /**
-     * Used when adding a style to an already loaded {@link Theme}.
+     * Used when adding a {@link com.nur1popcorn.irrlicht.gui.themes.parsing.Style} to an already
+     * loaded {@link Theme}.
      */
     public void reloadTheme()
     {

@@ -21,7 +21,7 @@ package com.nur1popcorn.irrlicht.engine.wrappers.client.gui;
 
 import com.nur1popcorn.irrlicht.engine.hooker.Hooker;
 import com.nur1popcorn.irrlicht.engine.hooker.HookingMethod;
-import com.nur1popcorn.irrlicht.engine.hooker.events.Render2DEvent;
+import com.nur1popcorn.irrlicht.engine.hooker.impl.Render2DEvent;
 import com.nur1popcorn.irrlicht.engine.mapper.DiscoveryMethod;
 import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.Wrapper;

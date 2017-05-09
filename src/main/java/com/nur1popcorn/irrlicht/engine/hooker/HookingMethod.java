@@ -19,7 +19,7 @@
 
 package com.nur1popcorn.irrlicht.engine.hooker;
 
-import com.darkmagician6.eventapi.events.Event;
+import com.nur1popcorn.irrlicht.engine.events.Event;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

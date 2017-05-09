@@ -17,19 +17,37 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.engine.hooker.events;
-
-import com.darkmagician6.eventapi.events.Event;
+package com.nur1popcorn.irrlicht.engine.events;
 
 /**
- * The {@link UpdateEvent} is called every 1/20th of a second and is used to update
- * the game's logic.
+ * The {@link Priority} is used to determine in what order events are called.
  *
- * @see Event
- * @see com.nur1popcorn.irrlicht.engine.wrappers.client.entity.PlayerSp
+ * @see EventManager
+ * @see MethodInfo
  *
  * @author nur1popcorn
- * @since 1.0.0-alpha
+ * @since 1.0.1-alpha
  */
-public class UpdateEvent extends Event
-{}
+public enum Priority
+{
+    /**
+     * Called first.
+     */
+    LOWEST,
+    /**
+     * Called after lowest.
+     */
+    LOW,
+    /**
+     * Called after low.
+     */
+    NORMAL,
+    /**
+     * Called after normal.
+     */
+    HIGH,
+    /**
+     * Called after high.
+     */
+    HIGHEST
+}

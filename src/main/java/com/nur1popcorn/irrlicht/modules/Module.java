@@ -19,7 +19,7 @@
 
 package com.nur1popcorn.irrlicht.modules;
 
-import com.darkmagician6.eventapi.EventManager;
+import com.nur1popcorn.irrlicht.engine.events.EventManager;
 import com.nur1popcorn.irrlicht.management.values.Value;
 import com.nur1popcorn.irrlicht.management.values.ValueTarget;
 

@@ -210,6 +210,8 @@ All one would have to do now is to create an instance of your class and register
 ## Release history
 * 1.0.0-alpha
   * Initial commit.
+* 1.0.1-alpha
+  * Added new event-system.
 
 ## Contributing
 *NOTE:* **DO NOT** contribute to the gui as I am currently rewriting big portions of it.<br/>

@@ -19,8 +19,8 @@
 
 package com.nur1popcorn.irrlicht.engine.hooker;
 
-import com.darkmagician6.eventapi.EventManager;
-import com.darkmagician6.eventapi.events.Event;
+import com.nur1popcorn.irrlicht.engine.events.EventManager;
+import com.nur1popcorn.irrlicht.engine.events.Event;
 import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.Wrapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.entity.PlayerSp;
@@ -48,6 +48,7 @@ import java.util.logging.Logger;
  * @see HookingHandler
  * @see HookingMethod
  * @see Event
+ * @see EventManager
  * @see Mapper
  * @see Wrapper
  *

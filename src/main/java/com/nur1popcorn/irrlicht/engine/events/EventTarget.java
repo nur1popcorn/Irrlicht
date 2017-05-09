@@ -17,20 +17,29 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.engine.hooker.events;
+package com.nur1popcorn.irrlicht.engine.events;
 
-import com.darkmagician6.eventapi.events.Event;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * The {@link Render2DEvent} is called by the
- * {@link com.nur1popcorn.irrlicht.engine.wrappers.client.gui.GuiIngame} class when
- * everything else was drawn to screen.
+ * The {@link EventTarget} is used to determine whether or not a method is a {@link Event}
+ * listener and the {@link Priority} of that listener.
  *
- * @see Event
- * @see com.nur1popcorn.irrlicht.engine.wrappers.client.gui.GuiIngame
+ * @see Priority
+ * @see EventManager
  *
  * @author nur1popcorn
- * @since 1.0.0-alpha
+ * @since 1.0.1-alpha
  */
-public class Render2DEvent extends Event
-{}
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface EventTarget
+{
+    /**
+     * @return the {@link Priority} of the listener.
+     */
+    public Priority value() default Priority.NORMAL;
+}

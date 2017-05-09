@@ -6,7 +6,7 @@
 
     <groupId>com.nur1popcorn</groupId>
     <artifactId>irrlicht</artifactId>
-    <version>1.0.0-alpha</version>
+    <version>1.0.1-alpha</version>
 
     <dependencies>
         <dependency>
