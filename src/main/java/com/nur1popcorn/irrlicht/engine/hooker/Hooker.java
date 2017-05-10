@@ -19,6 +19,7 @@
 
 package com.nur1popcorn.irrlicht.engine.hooker;
 
+import com.nur1popcorn.irrlicht.engine.events.CancellableEvent;
 import com.nur1popcorn.irrlicht.engine.events.EventManager;
 import com.nur1popcorn.irrlicht.engine.events.Event;
 import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
@@ -193,6 +194,11 @@ public class Hooker
         hookingHandlers.remove(method);
     }
 
+    public static void debug()
+    {
+        LOGGER.log(Level.INFO, "cancelled.");
+    }
+
     /**
      * <p>This method will place all the required hooks.</p>
      * <p><i>Note:</i> This method should only be called once.</p>
@@ -223,12 +229,25 @@ public class Hooker
                             final InsnList injection = new InsnList();
                             {
                                 //setup injection
-                                final String value = Type.getInternalName(hookingMethod.value());
+                                final Class eventClass = hookingMethod.value();
+                                final String value = Type.getInternalName(eventClass);
                                 injection.add(new TypeInsnNode(Opcodes.NEW, value));
                                 injection.add(new InsnNode(Opcodes.DUP));
                                 injection.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, value, "<init>", "()V", false));
                                 final String event = Type.getInternalName(Event.class);
                                 injection.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(EventManager.class), "call", "(L" + event + ";)L" + event + ";", false));
+
+                                if(method.getReturnType() == void.class &&
+                                   CancellableEvent.class.isAssignableFrom(eventClass))
+                                {
+                                    final String cancellable = Type.getInternalName(CancellableEvent.class);
+                                    injection.add(new TypeInsnNode(Opcodes.CHECKCAST, cancellable));
+                                    injection.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cancellable, "isCancelled", "()Z", false));
+                                    final LabelNode labelNode = new LabelNode();
+                                    injection.add(new JumpInsnNode(Opcodes.IFEQ, labelNode));
+                                    injection.add(new InsnNode(Opcodes.RETURN));
+                                    injection.add(labelNode);
+                                }
                             }
                             //check injection method.
                             if((flags & OPCODES) != 0 &&

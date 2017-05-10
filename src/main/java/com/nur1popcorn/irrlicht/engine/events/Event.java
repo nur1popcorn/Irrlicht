@@ -28,9 +28,4 @@ package com.nur1popcorn.irrlicht.engine.events;
  * @since 1.0.1-alpha
  */
 public interface Event
-{
-    default void call()
-    {
-        EventManager.call(this);
-    }
-}
+{}

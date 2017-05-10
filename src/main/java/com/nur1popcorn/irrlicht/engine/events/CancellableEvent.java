@@ -35,7 +35,7 @@ public class CancellableEvent implements Event
     /**
      * @return whether or not the {@link Event} was cancelled.
      */
-    private boolean isCancelled()
+    public boolean isCancelled()
     {
         return cancelled;
     }

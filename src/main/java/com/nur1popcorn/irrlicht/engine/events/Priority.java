@@ -20,7 +20,7 @@
 package com.nur1popcorn.irrlicht.engine.events;
 
 /**
- * The {@link Priority} is used to determine in what order events are called.
+ * The {@link Priority} is used to determine in what order {@link Event}s are called.
  *
  * @see EventManager
  * @see MethodInfo

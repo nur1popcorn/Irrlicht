@@ -86,7 +86,7 @@ It analyses the given structure and tries to find this pattern within the obfusc
 *Irrlicht* will then through [`Wrapper`](https://github.com/nur1popcorn/Irrlicht/blob/master/src/main/java/com/nur1popcorn/irrlicht/engine/wrappers/Wrapper.java)s make this code accessible to you.
 
 Still don't get it?<br/>
-Well, too bad for you. Go somewhere else.<br/>
+Well, too bad for you.<br/>
 Just kidding you can contact me [here](https://github.com/nur1popcorn/Irrlicht#contact) and I will try my best to explain it to you.
 
 ## Features
@@ -212,6 +212,8 @@ All one would have to do now is to create an instance of your class and register
   * Initial commit.
 * 1.0.1-alpha
   * Added new event-system.
+* 1.0.2-alpha
+  * Fully implemented [`CancellableEvent`](https://github.com/nur1popcorn/Irrlicht/blob/master/src/main/java/com/nur1popcorn/irrlicht/engine/events/CancellableEvent.java)s.
 
 ## Contributing
 *NOTE:* **DO NOT** contribute to the gui as I am currently rewriting big portions of it.<br/>

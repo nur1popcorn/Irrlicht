@@ -25,7 +25,7 @@ import org.objectweb.asm.tree.InsnList;
  * The {@link HookingMethod} is responsible for handling custom checks.
  *
  * @see Hooker
- * @see com.darkmagician6.eventapi.events.Event
+ * @see com.nur1popcorn.irrlicht.engine.events.Event
  *
  * @author nur1popcorn
  * @since 1.0.0-alpha

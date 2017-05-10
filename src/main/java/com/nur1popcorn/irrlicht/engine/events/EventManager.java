@@ -48,8 +48,8 @@ public class EventManager
      *
      * @param handle the object that contains the methods one wants to register and the
      *               handle used to invoke these methods.
-     * @param events the specific {@link Event}s which are supposed to be registered if
-     *               empty it will register any type of event.
+     * @param events the specific {@link Event}s which are supposed to be registered, if
+     *               empty, it will register any type of {@link Event}.
      *
      * @see #call(Event)
      */
@@ -69,8 +69,8 @@ public class EventManager
      * Unregisters all of the event-handlers of a instance.
      *
      * @param handle the handle for which one wants to unregister all the methods.
-     * @param events the specific {@link Event}s which are supposed to be unregistered if
-     *               empty it will unregister any type of event.
+     * @param events the specific {@link Event}s which are supposed to be unregistered, if
+     *               empty, it will unregister any type of {@link Event}.
      *
      * @see #call(Event)
      */
@@ -85,13 +85,11 @@ public class EventManager
                 final Set<MethodInfo> methodInfos = EVENT_REGISTRY.get(eventType);
                 final Iterator<MethodInfo> iterator = methodInfos.iterator();
                 while(iterator.hasNext())
-                {
                     if(iterator.next().getMethod().equals(method))
                     {
                         iterator.remove();
                         break;
                     }
-                }
 
                 if(methodInfos.isEmpty())
                     EVENT_REGISTRY.remove(eventType);
@@ -101,8 +99,8 @@ public class EventManager
 
     /**
      * @param method the method which should be checked.
-     * @param events the {@link Event} types which are valid if empty any type of event is
-     *               valid.
+     * @param events the {@link Event} types which are valid, if empty, any type of
+     *               {@link Event} is valid.
      *
      * @return whether or not a method is a {@link Event}-handler.
      */
@@ -117,7 +115,7 @@ public class EventManager
     }
 
     /**
-     * Removes all {@link Event}-handlers.
+     * Removes all event-handlers.
      */
     public static void clear()
     {
@@ -132,7 +130,7 @@ public class EventManager
      * @return the {@link Event} that was passed to the function with the modifications
      *         of the event-handlers applied.
      */
-    public static Event call(Event event)
+    public static <T extends Event> T call(T event)
     {
         if(EVENT_REGISTRY.containsKey(event.getClass()))
             EVENT_REGISTRY.get(event.getClass()).forEach(methodInfo -> {
