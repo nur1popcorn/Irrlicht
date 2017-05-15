@@ -57,6 +57,8 @@ import java.util.stream.Stream;
  * @see DiscoveryHandler
  * @see DiscoveryMethod
  * @see WrapperDelegationHandler
+ * @see Wrapper
+ * @see ASMUtils
  *
  * @author nur1popcorn
  * @since 1.0.0-alpha

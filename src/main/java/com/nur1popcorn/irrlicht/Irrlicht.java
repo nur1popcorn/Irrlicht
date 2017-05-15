@@ -42,7 +42,7 @@ public class Irrlicht
     /**
      * The client's version.
      */
-                               VERSION = "1.0.0-alpha";
+                               VERSION = "1.0.2-alpha";
 
     /**
      * An array containing all of the authors names.

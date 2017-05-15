@@ -52,6 +52,7 @@ import java.util.logging.Logger;
  * @see EventManager
  * @see Mapper
  * @see Wrapper
+ * @see ASMUtils
  *
  * @author nur1popcorn
  * @since 1.0.0-alpha
@@ -240,6 +241,7 @@ public class Hooker
                                 if(method.getReturnType() == void.class &&
                                    CancellableEvent.class.isAssignableFrom(eventClass))
                                 {
+                                    //check if was cancelled and if so leave method.
                                     final String cancellable = Type.getInternalName(CancellableEvent.class);
                                     injection.add(new TypeInsnNode(Opcodes.CHECKCAST, cancellable));
                                     injection.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cancellable, "isCancelled", "()Z", false));
