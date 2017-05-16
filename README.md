@@ -110,7 +110,6 @@ The mapper is responsible for creating and storing the mappings for all of the r
   In order to create a new wrapper you have to create an interface and extend [`Wrapper`](https://github.com/nur1popcorn/Irrlicht/blob/master/src/main/java/com/nur1popcorn/irrlicht/engine/wrappers/Wrapper.java). Then you will have to add a discovery method to the wrapper. This will tell the [`Mapper`](https://github.com/nur1popcorn/Irrlicht/blob/master/src/main/java/com/nur1popcorn/irrlicht/engine/mapper/Mapper.java) how the class is supposed to be obtained. I suggest looking at the documation of the mapper's class as it shows all of the default ways of obtaining a class. If this doesn't float your boat I suggest telling the mapper to use your custom check and attaching it to the class.
   
   *Note:* Some of the checks will require you to add some additional information to the [`DiscoveryMethod`](https://github.com/nur1popcorn/Irrlicht/blob/master/src/main/java/com/nur1popcorn/irrlicht/engine/mapper/DiscoveryMethod.java).
-  
   ```java
   @DiscoveryMethod(checks = Mapper.CUSTOM,
                    //The class declaring the class by declaring it as a field or by extending the class.
