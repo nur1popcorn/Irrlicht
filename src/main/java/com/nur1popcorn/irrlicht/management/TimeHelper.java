@@ -17,7 +17,7 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.utils;
+package com.nur1popcorn.irrlicht.management;
 
 /**
  * The {@link TimeHelper} is an util used to make it easier measuring the time passed.

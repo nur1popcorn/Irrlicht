@@ -17,26 +17,28 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.engine.hooker;
+package com.nur1popcorn.irrlicht.engine.events;
 
-import org.objectweb.asm.tree.MethodNode;
+import com.nur1popcorn.irrlicht.engine.events.impl.LocalVariableEvent;
 
 /**
- * The {@link HookingMethod} is responsible for handling custom checks.
+ * The {@link LocalVariableEvent} is a {@link Event} which is used to hijack the
+ * local variables of a method.
  *
- * @see Hooker
- * @see com.nur1popcorn.irrlicht.engine.events.Event
- * @see MethodNode
+ * @see Event
  *
  * @author nur1popcorn
- * @since 1.0.0-alpha
+ * @since 1.1.0-alpha
  */
-public interface HookingHandler
+public interface ILocalVariableEvent extends Event
 {
     /**
-     * Adds a custom hook to the {@link MethodNode} provided.
-     *
-     * @param methodNode the {@link MethodNode} which the hook is supposed to be added to.
+     * @param localVariables the obtained local variables of the hooked function.
      */
-    public void hook(MethodNode methodNode);
+    public void setLocalVariables(Object[] localVariables);
+
+    /**
+     * @return the local variables which should be overwritten.
+     */
+    public Object[] getLocalVariables();
 }

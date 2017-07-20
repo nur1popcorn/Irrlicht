@@ -17,26 +17,29 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.engine.hooker;
+package com.nur1popcorn.irrlicht.launcher.rmi;
 
-import org.objectweb.asm.tree.MethodNode;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.util.logging.LogRecord;
 
 /**
- * The {@link HookingMethod} is responsible for handling custom checks.
+ * The {@link ILogOutput} is used to communicate with the launchers
+ * {@link com.nur1popcorn.irrlicht.launcher.LogOutput}.
  *
- * @see Hooker
- * @see com.nur1popcorn.irrlicht.engine.events.Event
- * @see MethodNode
+ * @see Remote
  *
  * @author nur1popcorn
- * @since 1.0.0-alpha
+ * @since 1.1.0-alpha
  */
-public interface HookingHandler
+public interface ILogOutput extends Remote
 {
     /**
-     * Adds a custom hook to the {@link MethodNode} provided.
+     * Logs the provided {@link LogRecord}.
      *
-     * @param methodNode the {@link MethodNode} which the hook is supposed to be added to.
+     * @param logRecord the {@link LogRecord} which should be logged.
+     *
+     * @throws RemoteException
      */
-    public void hook(MethodNode methodNode);
+    public void log(LogRecord logRecord) throws RemoteException;
 }

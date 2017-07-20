@@ -24,11 +24,12 @@ import com.nur1popcorn.irrlicht.engine.events.EventTarget;
 import com.nur1popcorn.irrlicht.engine.hooker.impl.UpdateEvent;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.Minecraft;
 import com.nur1popcorn.irrlicht.management.values.SliderValue;
+import com.nur1popcorn.irrlicht.management.values.ToggleValue;
 import com.nur1popcorn.irrlicht.management.values.ValueTarget;
 import com.nur1popcorn.irrlicht.modules.Category;
 import com.nur1popcorn.irrlicht.modules.Module;
 import com.nur1popcorn.irrlicht.modules.ModuleInfo;
-import com.nur1popcorn.irrlicht.utils.TimeHelper;
+import com.nur1popcorn.irrlicht.management.TimeHelper;
 import org.lwjgl.input.Mouse;
 
 /**
@@ -47,6 +48,9 @@ public class AutoClicker extends Module
     @ValueTarget
     private SliderValue<Integer> cps = new SliderValue<>(this, "Cps", 12, 1, 20, 1);
 
+    @ValueTarget
+    private ToggleValue blockhit = new ToggleValue(this, "BlockHit", false);
+
     private TimeHelper timer = new TimeHelper();
 
     @EventTarget
@@ -54,6 +58,7 @@ public class AutoClicker extends Module
     {
         Minecraft minecraft;
         if(Mouse.isButtonDown(0) &&
+           (blockhit.value || !Mouse.isButtonDown(1)) &&
            (minecraft = Irrlicht.getMinecraft()).getGuiScreen().getHandle() == null &&
            timer.hasMSPassed(1000 / cps.value))
         {

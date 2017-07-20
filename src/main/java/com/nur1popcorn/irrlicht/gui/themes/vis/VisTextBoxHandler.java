@@ -31,7 +31,7 @@ import com.nur1popcorn.irrlicht.gui.themes.parsing.values.NumberValue;
 import com.nur1popcorn.irrlicht.gui.themes.parsing.values.StringValue;
 import com.nur1popcorn.irrlicht.management.keybind.KeyMask;
 import com.nur1popcorn.irrlicht.utils.RenderUtils;
-import com.nur1popcorn.irrlicht.utils.TimeHelper;
+import com.nur1popcorn.irrlicht.management.TimeHelper;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;

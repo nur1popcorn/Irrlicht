@@ -103,3 +103,35 @@
 .combo-box .list-view .list-cell:hover {
     -fx-background-color: #424242;
 }
+
+.performance-charts {
+    -fx-background-color: #1d1d1d;
+}
+
+.chart-plot-background {
+    -fx-background-color: #1b1b1b;
+}
+
+.chart-type-label {
+    -fx-text-fill: #c9c9c9;
+}
+
+.chart-series-area-line {
+    -fx-stroke: #6ed0e0;
+    -fx-stroke-width: 2px;
+}
+
+.chart-series-area-fill {
+    -fx-fill: linear-gradient(to top, #41493b88, #41493b49);
+}
+
+.axis {
+    -fx-border-color: transparent;
+}
+
+.chart-vertical-grid-lines,
+.chart-horizontal-grid-lines,
+.chart-vertical-zero-line,
+.chart-horizontal-zero-line  {
+    -fx-stroke: transparent;
+}

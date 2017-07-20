@@ -19,6 +19,8 @@
 
 package com.nur1popcorn.irrlicht.engine.events;
 
+import com.sun.xml.internal.ws.api.Cancelable;
+
 import java.lang.reflect.Method;
 
 /**
@@ -33,16 +35,18 @@ import java.lang.reflect.Method;
  */
 public class MethodInfo
 {
-    private Method method;
-    private Object handle;
-    private Priority priority;
+    private final Method method;
+    private final Object handle;
+    private final Priority priority;
+    private final boolean ignoreCancelled;
 
-    public MethodInfo(Method method, Object handle, Priority priority)
+    public MethodInfo(Method method, Object handle, Priority priority, boolean ignoreCancelled)
     {
         assert method != null && handle != null && priority != null;
         this.method = method;
         this.handle = handle;
         this.priority = priority;
+        this.ignoreCancelled = Cancelable.class.isAssignableFrom(method.getParameterTypes()[0]) && ignoreCancelled;
     }
 
     /**
@@ -67,6 +71,14 @@ public class MethodInfo
     public Priority getPriority()
     {
         return priority;
+    }
+
+    /**
+     * @return weather or not the {@link Event} should be ignored if it was cancelled.
+     */
+    public boolean ignoreCancelled()
+    {
+        return ignoreCancelled;
     }
 
     @Override

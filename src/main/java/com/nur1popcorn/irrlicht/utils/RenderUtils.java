@@ -20,6 +20,7 @@
 package com.nur1popcorn.irrlicht.utils;
 
 import com.nur1popcorn.irrlicht.Irrlicht;
+import com.nur1popcorn.irrlicht.management.ScaledResolution;
 import org.lwjgl.BufferUtils;
 
 import java.awt.image.BufferedImage;

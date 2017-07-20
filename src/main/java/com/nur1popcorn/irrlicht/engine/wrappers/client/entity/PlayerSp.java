@@ -25,7 +25,7 @@ import com.nur1popcorn.irrlicht.engine.hooker.impl.UpdateEvent;
 import com.nur1popcorn.irrlicht.engine.mapper.DiscoveryMethod;
 import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.Minecraft;
-import com.nur1popcorn.irrlicht.engine.wrappers.client.network.NetHandler;
+import com.nur1popcorn.irrlicht.engine.wrappers.client.network.NetHandlerClient;
 import org.objectweb.asm.Opcodes;
 
 /**
@@ -43,7 +43,7 @@ import org.objectweb.asm.Opcodes;
 public interface PlayerSp extends ClientPlayer
 {
     @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
-    public NetHandler getNetHandler();
+    public NetHandlerClient getNetHandlerClient();
 
     @HookingMethod(value = UpdateEvent.class,
                    flags = Hooker.DEFAULT | Hooker.OPCODES | Hooker.AFTER,

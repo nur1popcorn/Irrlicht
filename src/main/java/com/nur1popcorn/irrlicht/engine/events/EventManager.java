@@ -19,9 +19,14 @@
 
 package com.nur1popcorn.irrlicht.engine.events;
 
+import com.nur1popcorn.irrlicht.engine.events.impl.CancellableEvent;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -60,8 +65,9 @@ public class EventManager
             {
                 final Class<? extends Event> eventType = (Class<? extends Event>) method.getParameterTypes()[0];
                 EVENT_REGISTRY.putIfAbsent(eventType, new HashSet<>());
+                final EventTarget eventTarget = method.getDeclaredAnnotation(EventTarget.class);
                 EVENT_REGISTRY.get(eventType)
-                              .add(new MethodInfo(method, handle, method.getDeclaredAnnotation(EventTarget.class).value()));
+                              .add(new MethodInfo(method, handle, eventTarget.priority(), eventTarget.ignoreCancelled()));
             }
     }
 
@@ -78,19 +84,12 @@ public class EventManager
     {
         for(Method method : handle.getClass().getDeclaredMethods())
         {
-            Class<? extends Event> eventType;
+            final Class<? extends Event> eventType;
+            final Set<MethodInfo> methodInfos;
             if(isValid(method, events) &&
-               EVENT_REGISTRY.containsKey(eventType = (Class<? extends Event>) method.getParameterTypes()[0]))
+              (methodInfos = EVENT_REGISTRY.get(eventType = (Class<? extends Event>) method.getParameterTypes()[0])) != null)
             {
-                final Set<MethodInfo> methodInfos = EVENT_REGISTRY.get(eventType);
-                final Iterator<MethodInfo> iterator = methodInfos.iterator();
-                while(iterator.hasNext())
-                    if(iterator.next().getMethod().equals(method))
-                    {
-                        iterator.remove();
-                        break;
-                    }
-
+                methodInfos.remove(method);
                 if(methodInfos.isEmpty())
                     EVENT_REGISTRY.remove(eventType);
             }
@@ -132,15 +131,20 @@ public class EventManager
      */
     public static <T extends Event> T call(T event)
     {
-        if(EVENT_REGISTRY.containsKey(event.getClass()))
-            EVENT_REGISTRY.get(event.getClass()).forEach(methodInfo -> {
+        final Set<MethodInfo> methodInfos = EVENT_REGISTRY.get(event.getClass());
+        if(methodInfos != null)
+           methodInfos.forEach(methodInfo -> {
                 try
                 {
-                    final Method method = methodInfo.getMethod();
-                    method.setAccessible(true);
-                    method.invoke(methodInfo.getHandle(), event);
+                    if(!methodInfo.ignoreCancelled() ||
+                       !((CancellableEvent) event).isCancelled())
+                    {
+                        final Method method = methodInfo.getMethod();
+                        method.setAccessible(true);
+                        method.invoke(methodInfo.getHandle(), event);
+                    }
                 }
-                catch (IllegalAccessException | InvocationTargetException e)
+                catch(IllegalAccessException | InvocationTargetException e)
                 {
                     e.printStackTrace();
                 }

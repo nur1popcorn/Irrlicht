@@ -17,26 +17,25 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.engine.hooker;
+package com.nur1popcorn.irrlicht.engine.wrappers.client.network.client;
 
-import org.objectweb.asm.tree.MethodNode;
+import com.nur1popcorn.irrlicht.engine.mapper.DiscoveryMethod;
+import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
+import com.nur1popcorn.irrlicht.engine.wrappers.client.network.Packet;
 
 /**
- * The {@link HookingMethod} is responsible for handling custom checks.
+ * The {@link C01ChatMessage} is a packet sent by the player containing the chat message.
  *
- * @see Hooker
- * @see com.nur1popcorn.irrlicht.engine.events.Event
- * @see MethodNode
+ * @see Packet
  *
  * @author nur1popcorn
- * @since 1.0.0-alpha
+ * @since 1.1.0-alpha
  */
-public interface HookingHandler
+public interface C01ChatMessage extends Packet
 {
-    /**
-     * Adds a custom hook to the {@link MethodNode} provided.
-     *
-     * @param methodNode the {@link MethodNode} which the hook is supposed to be added to.
-     */
-    public void hook(MethodNode methodNode);
+    @DiscoveryMethod(modifiers = Mapper.DEFAULT | Mapper.FIELD)
+    public String getMessage();
+
+    @DiscoveryMethod(modifiers = Mapper.DEFAULT | Mapper.FIELD)
+    public void setMessage(String message);
 }

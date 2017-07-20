@@ -53,20 +53,6 @@ public class MovementUtils
                player.getForward() != 0;
     }
 
-    /***
-     * @param value the value which is supposed to be rounded.
-     * @param places the number of places that it rounds to.
-     *
-     * @return a rounded value based on the places.
-     */
-    public static double round(double value, int places)
-    {
-        assert places > 0;
-        return new BigDecimal(value)
-                .setScale(places, RoundingMode.HALF_UP)
-                .doubleValue();
-    }
-
     /**
      * Sets the {@link PlayerSp}'s speed.
      *
@@ -82,12 +68,12 @@ public class MovementUtils
             final PlayerSp player = Irrlicht.getMinecraft().getPlayer();
             final float forward = player.getForward(),
                         strafe = player.getStrafe();
-            double yaw = Math.toRadians(player.getRotationYaw() + (strafe != 0 ? (forward < 0 ? -1 : 1) * new int[] {
+            final double yaw = Math.toRadians(player.getRotationYaw() + (strafe != 0 ? (forward < 0 ? -1 : 1) * new int[] {
                 -90,
                 -45,
                 90,
                 45,
-            }[(int)(round(Math.abs(forward), 1) - round(strafe, 1) + 1)] : 0) + (forward < 0 ? -180 : 0));
+            }[(int)(MathUtils.roundClean(Math.abs(forward), 1) - MathUtils.roundClean(strafe, 1) + 1)] : 0) + (forward < 0 ? -180 : 0));
             player.setMotionX(-Math.sin(yaw) * speed);
             player.setMotionZ(Math.cos(yaw) * speed);
         }

@@ -17,7 +17,7 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.utils;
+package com.nur1popcorn.irrlicht.management;
 
 import com.nur1popcorn.irrlicht.engine.wrappers.client.settings.GameSettings;
 import org.lwjgl.opengl.Display;

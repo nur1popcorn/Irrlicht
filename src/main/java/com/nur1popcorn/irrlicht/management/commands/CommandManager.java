@@ -17,26 +17,8 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.engine.hooker;
+package com.nur1popcorn.irrlicht.management.commands;
 
-import org.objectweb.asm.tree.MethodNode;
-
-/**
- * The {@link HookingMethod} is responsible for handling custom checks.
- *
- * @see Hooker
- * @see com.nur1popcorn.irrlicht.engine.events.Event
- * @see MethodNode
- *
- * @author nur1popcorn
- * @since 1.0.0-alpha
- */
-public interface HookingHandler
+public class CommandManager
 {
-    /**
-     * Adds a custom hook to the {@link MethodNode} provided.
-     *
-     * @param methodNode the {@link MethodNode} which the hook is supposed to be added to.
-     */
-    public void hook(MethodNode methodNode);
 }

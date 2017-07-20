@@ -17,26 +17,28 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.engine.hooker;
+package com.nur1popcorn.irrlicht.launcher.rmi;
 
-import org.objectweb.asm.tree.MethodNode;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
- * The {@link HookingMethod} is responsible for handling custom checks.
+ * The {@link IPerformanceCharts} is used to communicate with the launchers
+ * {@link com.nur1popcorn.irrlicht.launcher.PerformanceCharts}
  *
- * @see Hooker
- * @see com.nur1popcorn.irrlicht.engine.events.Event
- * @see MethodNode
+ * @see Remote
  *
  * @author nur1popcorn
- * @since 1.0.0-alpha
+ * @since 1.1.0-alpha
  */
-public interface HookingHandler
+public interface IPerformanceCharts extends Remote
 {
-    /**
-     * Adds a custom hook to the {@link MethodNode} provided.
-     *
-     * @param methodNode the {@link MethodNode} which the hook is supposed to be added to.
-     */
-    public void hook(MethodNode methodNode);
+    public void update(Type type, String text, int value) throws RemoteException;
+
+    public enum Type
+    {
+        RAM,
+        CPU_LOAD,
+        FPS
+    }
 }

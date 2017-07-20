@@ -17,26 +17,19 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.engine.hooker;
+package com.nur1popcorn.irrlicht.engine.hooker.impl;
 
-import org.objectweb.asm.tree.MethodNode;
+import com.nur1popcorn.irrlicht.engine.events.Event;
+import org.lwjgl.opengl.Display;
 
 /**
- * The {@link HookingMethod} is responsible for handling custom checks.
+ * The {@link SwapBuffersEvent} is called when {@link Display#swapBuffers()} is called
+ * and is used for performance measurements.
  *
- * @see Hooker
- * @see com.nur1popcorn.irrlicht.engine.events.Event
- * @see MethodNode
+ * @see Event
  *
  * @author nur1popcorn
- * @since 1.0.0-alpha
+ * @since 1.1.0-alpha
  */
-public interface HookingHandler
-{
-    /**
-     * Adds a custom hook to the {@link MethodNode} provided.
-     *
-     * @param methodNode the {@link MethodNode} which the hook is supposed to be added to.
-     */
-    public void hook(MethodNode methodNode);
-}
+public class SwapBuffersEvent implements Event
+{}

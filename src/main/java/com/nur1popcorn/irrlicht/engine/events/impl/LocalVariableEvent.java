@@ -17,36 +17,33 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.engine.events;
+package com.nur1popcorn.irrlicht.engine.events.impl;
+
+import com.nur1popcorn.irrlicht.engine.events.Event;
+import com.nur1popcorn.irrlicht.engine.events.ILocalVariableEvent;
 
 /**
- * The {@link CancellableEvent} is a {@link Event} which can be cancelled typically resulting
- * in the rest of the caller method being ignored.
+ * The {@link LocalVariableEvent} is a {@link Event} which is used to modify the
+ * local variables of a method.
  *
  * @see Event
  *
  * @author nur1popcorn
- * @since 1.0.1-alpha
+ * @since 1.1.0-alpha
  */
-public class CancellableEvent implements Event
+public class LocalVariableEvent implements ILocalVariableEvent
 {
-    private boolean cancelled;
+    protected Object[] localVariables;
 
-    /**
-     * @return whether or not the {@link Event} was cancelled.
-     */
-    public boolean isCancelled()
+    @Override
+    public void setLocalVariables(Object[] localVariables)
     {
-        return cancelled;
+        this.localVariables = localVariables;
     }
 
-    /**
-     * Sets whether or not the {@link Event} is cancelled.
-     *
-     * @param cancelled whether or not the {@link Event} is cancelled.
-     */
-    public void setCancelled(boolean cancelled)
+    @Override
+    public Object[] getLocalVariables()
     {
-        this.cancelled = cancelled;
+        return localVariables;
     }
 }

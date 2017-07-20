@@ -17,24 +17,26 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.engine.wrappers.client.network;
+package com.nur1popcorn.irrlicht.launcher.rmi;
 
-import com.nur1popcorn.irrlicht.engine.mapper.DiscoveryMethod;
-import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
-import com.nur1popcorn.irrlicht.engine.wrappers.Wrapper;
-import com.nur1popcorn.irrlicht.engine.wrappers.client.entity.PlayerSp;
+import java.io.File;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
- * The {@link NetHandler} class is used to handle the connection to the server.
+ * The {@link ILauncher} is used for client launcher communication.
  *
- * @see Wrapper
- * @see PlayerSp
+ * @see Remote
  *
  * @author nur1popcorn
- * @since 1.0.0-alpha
+ * @since 1.1.0-alpha
  */
-@DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.STRING_CONST,
-                 declaring = PlayerSp.class,
-                 constants = { "MC|Brand" })
-public interface NetHandler extends Wrapper
-{}
+public interface ILauncher extends Remote
+{
+    /**
+     * @throws RemoteException
+     *
+     * @return the path the launcher is located in.
+     */
+    public File getLauncherDir() throws RemoteException;
+}

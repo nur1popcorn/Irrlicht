@@ -17,26 +17,29 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.engine.hooker;
+package com.nur1popcorn.irrlicht.management;
 
-import org.objectweb.asm.tree.MethodNode;
+import java.io.File;
 
 /**
- * The {@link HookingMethod} is responsible for handling custom checks.
- *
- * @see Hooker
- * @see com.nur1popcorn.irrlicht.engine.events.Event
- * @see MethodNode
+ * The {@link GameConfig} class contains useful information about the game which the
+ * client was injected into.
  *
  * @author nur1popcorn
- * @since 1.0.0-alpha
+ * @since 1.1.0-alpha
  */
-public interface HookingHandler
+public class GameConfig
 {
-    /**
-     * Adds a custom hook to the {@link MethodNode} provided.
-     *
-     * @param methodNode the {@link MethodNode} which the hook is supposed to be added to.
-     */
-    public void hook(MethodNode methodNode);
+   public final String version;
+   public final File gameDir,
+                     assetDir;
+   public final Class main;
+
+   public GameConfig(String version, String gameDir, String assetDir, String main) throws ClassNotFoundException
+   {
+      this.version = version;
+      this.gameDir = new File(gameDir);
+      this.assetDir = new File(assetDir);
+      this.main = Class.forName(main);
+   }
 }

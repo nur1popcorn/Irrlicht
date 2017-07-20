@@ -17,26 +17,26 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.engine.hooker;
+package com.nur1popcorn.irrlicht.engine.wrappers.client.network;
 
-import org.objectweb.asm.tree.MethodNode;
+import com.nur1popcorn.irrlicht.engine.mapper.DiscoveryMethod;
+import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
+import com.nur1popcorn.irrlicht.engine.wrappers.client.entity.PlayerSp;
 
 /**
- * The {@link HookingMethod} is responsible for handling custom checks.
+ * The {@link NetHandlerClient} handle incoming packets.
  *
- * @see Hooker
- * @see com.nur1popcorn.irrlicht.engine.events.Event
- * @see MethodNode
+ * @see PlayerSp
+ * @see INetHandlerClient
  *
  * @author nur1popcorn
  * @since 1.0.0-alpha
  */
-public interface HookingHandler
+@DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.STRING_CONST,
+                 declaring = PlayerSp.class,
+                 constants = { "MC|Brand" })
+public interface NetHandlerClient extends INetHandlerClient
 {
-    /**
-     * Adds a custom hook to the {@link MethodNode} provided.
-     *
-     * @param methodNode the {@link MethodNode} which the hook is supposed to be added to.
-     */
-    public void hook(MethodNode methodNode);
+    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
+    public NetworkManager getNetManager();
 }

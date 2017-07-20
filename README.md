@@ -138,7 +138,6 @@ The mapper is responsible for creating and storing the mappings for all of the r
 ### Hooker
 
 The [`Hooker`](https://github.com/nur1popcorn/Irrlicht/blob/master/src/main/java/com/nur1popcorn/irrlicht/engine/hooker/Hooker.java) is responsible for hooking all of the registered events. In order to use it, all one has to do is create an event class and attach it to a wrapper.
-
 ```java
     @HookingMethod(value = UpdateEvent.class,
                    //inject after the unique array of opcodes.
@@ -215,6 +214,7 @@ All one would have to do now is to create an instance of your class and register
   * Added new event-system.
 * 1.0.2-alpha
   * Fully implemented [`CancellableEvent`](https://github.com/nur1popcorn/Irrlicht/blob/master/src/main/java/com/nur1popcorn/irrlicht/engine/events/CancellableEvent.java)s.
+* 1.1.0-alpha
 
 ## Contributing
 *NOTE:* **DO NOT** contribute to the gui as I am currently rewriting big portions of it.<br/>

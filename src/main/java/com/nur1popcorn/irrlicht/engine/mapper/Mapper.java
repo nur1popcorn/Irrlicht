@@ -20,6 +20,8 @@
 package com.nur1popcorn.irrlicht.engine.mapper;
 
 import com.nur1popcorn.irrlicht.engine.exceptions.MappingException;
+import com.nur1popcorn.irrlicht.engine.hooker.HookingMethod;
+import com.nur1popcorn.irrlicht.engine.hooker.impl.SwapBuffersEvent;
 import com.nur1popcorn.irrlicht.engine.wrappers.Start;
 import com.nur1popcorn.irrlicht.engine.wrappers.Wrapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.Minecraft;
@@ -28,7 +30,10 @@ import com.nur1popcorn.irrlicht.engine.wrappers.client.entity.PlayerSp;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.gui.GuiIngame;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.gui.GuiScreen;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.minecraft.Timer;
-import com.nur1popcorn.irrlicht.engine.wrappers.client.network.NetHandler;
+import com.nur1popcorn.irrlicht.engine.wrappers.client.network.INetHandlerClient;
+import com.nur1popcorn.irrlicht.engine.wrappers.client.network.NetHandlerClient;
+import com.nur1popcorn.irrlicht.engine.wrappers.client.network.NetworkManager;
+import com.nur1popcorn.irrlicht.engine.wrappers.client.network.Packet;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.settings.GameSettings;
 import com.nur1popcorn.irrlicht.engine.wrappers.entity.Entity;
 import com.nur1popcorn.irrlicht.engine.wrappers.entity.EntityLivingBase;
@@ -37,7 +42,9 @@ import com.nur1popcorn.irrlicht.engine.wrappers.entity.PlayerAbilities;
 import com.nur1popcorn.irrlicht.engine.wrappers.util.AxisAlignedBB;
 import com.nur1popcorn.irrlicht.utils.ASMUtils;
 import com.nur1popcorn.irrlicht.utils.LoggerFactory;
-import com.nur1popcorn.irrlicht.utils.TimeHelper;
+import com.nur1popcorn.irrlicht.management.TimeHelper;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.Display;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
@@ -225,6 +232,17 @@ public class Mapper
     {}
 
     /**
+     * Used for hooking the {@link Display#swapBuffers()} method.
+     */
+    @DiscoveryMethod(checks = CUSTOM)
+    public interface DisplayWrapper extends Wrapper
+    {
+        @DiscoveryMethod(checks = CUSTOM)
+        @HookingMethod(SwapBuffersEvent.class)
+        public void swapBuffers() throws LWJGLException;
+    }
+
+    /**
      * A Factory method used to create a default {@link Mapper}.
      *
      * @see #getInstance()
@@ -234,7 +252,11 @@ public class Mapper
     private static Mapper createMapper()
     {
         final Mapper mapper = new Mapper();
-        mapper.register(Start.class, clazz -> Class.forName(Start.DEFAULT_LOC));
+        mapper.register(Start.class, m -> Class.forName(Start.DEFAULT_LOC));
+        //obtain #swapBuffers method.
+        mapper.register(DisplayWrapper.class, m -> Display.class);
+        mapper.register(ASMUtils.getMethod(DisplayWrapper.class, "swapBuffers()V"), m -> ASMUtils.getMethod(Display.class, "swapBuffers()V"));
+
         mapper.register(Minecraft.class, m -> {
             final Class start = m.getMappedClass(Start.class);
             if(start != null)
@@ -269,18 +291,15 @@ public class Mapper
             {
                 MethodNode methodNode = ASMUtils.getMethodNode(method);
                 assert methodNode != null;
-                int offset = 0;
-                for(int i = 0; i < methodNode.instructions.size(); i++)
+                int i = 0;
+                for(; i < methodNode.instructions.size(); i++)
                 {
                     final AbstractInsnNode insnNode = methodNode.instructions.get(i);
                     if(insnNode.getType() == AbstractInsnNode.LDC_INSN &&
                        "Ticking screen".equals(((LdcInsnNode)insnNode).cst.toString()))
-                    {
-                        offset = i;
                         break;
-                    }
                 }
-                final MethodInsnNode methodInsnNode = (MethodInsnNode)ASMUtils.getLastInstruction(methodNode.instructions, Opcodes.INVOKEVIRTUAL, methodNode.instructions.size() - offset);
+                final MethodInsnNode methodInsnNode = (MethodInsnNode)ASMUtils.getLastInstruction(methodNode.instructions, Opcodes.INVOKEVIRTUAL, methodNode.instructions.size() - i);
                 return ASMUtils.getMethod(m.getMappedClass(GuiScreen.class), methodInsnNode.name + methodInsnNode.desc);
             }
             return null;
@@ -294,7 +313,11 @@ public class Mapper
             }
             return null;
         });
-        mapper.register(NetHandler.class);
+        mapper.register(NetHandlerClient.class);
+        mapper.register(INetHandlerClient.class, m -> m.getMappedClass(NetHandlerClient.class).getInterfaces()[0]);
+        //mapper.register(S12Velocity.class);
+        mapper.register(NetworkManager.class);
+        mapper.register(Packet.class, m -> m.getMappedClass(INetHandlerClient.class).getDeclaredMethods()[0].getParameterTypes()[0].getInterfaces()[0]);
         mapper.register(GameSettings.class);
         mapper.register(GuiIngame.class);
         return mapper;
@@ -415,7 +438,8 @@ public class Mapper
                     if((flags & FIELD) != 0 ||
                        (flags & STRUCTURE_START) != 0 ||
                        (flags & STRUCTURE_END) != 0 ||
-                       (flags & CONSTRUCTOR) != 0)
+                       (flags & CONSTRUCTOR) != 0 ||
+                       (flags & OPCODES) != 0)
                         LOGGER.log(Level.WARNING, "The wrappers class provided has a invalid flags attached to it: " + wrapper.getName() + ":" + Integer.toBinaryString(flags));
 
                     final Class declaringClass;

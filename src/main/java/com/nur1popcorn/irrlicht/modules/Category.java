@@ -20,7 +20,7 @@
 package com.nur1popcorn.irrlicht.modules;
 
 /**
- * The {@link Category} is a cheat category.
+ * The {@link Category} class is used to represent cheat categories.
  *
  * @see Module
  *

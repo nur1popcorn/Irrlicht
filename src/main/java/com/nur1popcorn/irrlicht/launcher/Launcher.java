@@ -20,6 +20,8 @@
 package com.nur1popcorn.irrlicht.launcher;
 
 import com.nur1popcorn.irrlicht.Irrlicht;
+import com.nur1popcorn.irrlicht.launcher.rmi.ILauncher;
+import com.nur1popcorn.irrlicht.launcher.rmi.impl.RmiManager;
 import com.sun.tools.attach.*;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -29,6 +31,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -38,25 +42,36 @@ import javafx.stage.StageStyle;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.rmi.AlreadyBoundException;
+import java.rmi.RemoteException;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 /**
- * The {@link Main} is used by the clients launcher.
+ * The {@link Launcher} is used by the clients launcher.
  *
  * @see LogOutput
  *
  * @author nur1popcorn
  * @since 1.0.0-alpha
  */
-public class Main extends Application
+public class Launcher extends Application implements ILauncher
 {
+    private static final File LAUNCHER_LOC = new File(
+                         Launcher.class
+                                 .getProtectionDomain()
+                                 .getCodeSource()
+                                 .getLocation()
+                                 .getPath()
+                         );
+
+    public Launcher()
+    {
+        RmiManager.getInstance()
+                  .register("Launcher", this);
+    }
+
     @Override
     public void start(Stage stage) throws IOException
     {
@@ -109,14 +124,39 @@ public class Main extends Application
 
         final HBox options = new HBox();
         {
-            final ComboBox pidSelector = new ComboBox();
+            final ComboBox<String> pidSelector = new ComboBox<>();
             pidSelector.setMinWidth(100);
 
             final Button inject = new Button("Inject");
 
+            final Image icon = new Image("icons/minecraft.png");
+            final Map<String, String> vmdMap = new HashMap<>();
+
+            pidSelector.setCellFactory(listView -> new ListCell<String>() {
+                @Override
+                protected void updateItem(String item, boolean empty)
+                {
+                    super.updateItem(item, empty);
+                    setText(item);
+                    setGraphic(null);
+                    if(item != null && vmdMap.get(item).contains("net.minecraft.client.main.Main"))
+                    {
+                        ImageView imageView = new ImageView(icon);
+                        imageView.setFitWidth(10);
+                        imageView.setFitHeight(10);
+                        imageView.setPreserveRatio(true);
+                        setGraphic(imageView);
+                    }
+                }
+            });
+
             pidSelector.setOnShowing(event -> {
+                vmdMap.clear();
                 pidSelector.getItems().clear();
-                VirtualMachine.list().forEach(vmd -> pidSelector.getItems().add(vmd.id()));
+                VirtualMachine.list().forEach(vmd -> {
+                    vmdMap.put(vmd.id(), vmd.displayName());
+                    pidSelector.getItems().add(vmd.id());
+                });
                 inject.setDisable(true);
             });
 
@@ -129,36 +169,45 @@ public class Main extends Application
             inject.setOnAction(event -> {
                 try
                 {
-                    File currentFile = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-                    File tempFile = File.createTempFile(UUID.randomUUID().toString(), ".tmp");
-                    Files.copy(currentFile.toPath(), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    RmiManager.getInstance()
+                              .createRegistry();
+                    final String selectedPid = pidSelector.getSelectionModel().getSelectedItem();
                     for(VirtualMachineDescriptor vmd : VirtualMachine.list())
-                        if(vmd.id().equals(pidSelector.getSelectionModel().getSelectedItem()))
+                        if(vmd.id().equals(selectedPid))
                         {
-                            try
-                            {
-                                inject.setDisable(true);
-                                pidSelector.setDisable(true);
-                                inject.setText("Attaching..");
-                                VirtualMachine vm = VirtualMachine.attach(vmd);
-                                inject.setText("Loading agent..");
-                                vm.loadAgent(tempFile.getAbsolutePath(), currentFile.getCanonicalPath());
-                                inject.setText("Detaching..");
-                                vm.detach();
-                                inject.setText("Injected & Detached");
-                            }
-                            catch (AttachNotSupportedException | IOException | AgentInitializationException | AgentLoadException e)
-                            {
-                                e.printStackTrace();
-                            }
+                            inject.setDisable(true);
+                            pidSelector.setDisable(true);
+                            inject.setText("Attaching..");
+                            VirtualMachine vm = VirtualMachine.attach(vmd);
+                            inject.setText("Loading agent..");
+                            vm.loadAgent(LAUNCHER_LOC.getAbsolutePath(), "main=" + vmd.displayName().replaceAll(" --", ",").replaceAll(" ", "="));
+                            inject.setText("Detaching..");
+                            vm.detach();
+                            inject.setText("Injected & Detached");
                             return;
                         }
                 }
-                catch(IOException e)
+                catch(AlreadyBoundException |
+                      RemoteException e)
+                {
+                    e.printStackTrace();
+                    logOutput.log(new LogRecord(Level.SEVERE, "Unable to bind port: " + RmiManager.REGISTRY_PORT));
+                }
+                catch(AttachNotSupportedException |
+                      AgentInitializationException |
+                      AgentLoadException |
+                      IOException e)
                 {
                     e.printStackTrace();
                 }
             });
+
+            RmiManager.getInstance()
+                      .addShutdownListener(() -> Platform.runLater(() -> {
+                          inject.setText("Inject");
+                          pidSelector.setDisable(false);
+                      }));
+
             inject.setAlignment(Pos.CENTER);
 
             final HBox center = new HBox(inject);
@@ -173,7 +222,7 @@ public class Main extends Application
         options.setAlignment(Pos.CENTER);
         options.setMinHeight(40);
 
-        final VBox layout = new VBox(logOutputSettings, logOutput, options);
+        final VBox layout = new VBox(logOutputSettings, new PerformanceCharts(), logOutput, options);
         VBox.setVgrow(logOutput, Priority.ALWAYS);
         layout.setPadding(new Insets(2, 2, 2, 2));
 
@@ -181,14 +230,14 @@ public class Main extends Application
         final VBox rootElement = new VBox(windowOptions, layout);
         rootElement.getStyleClass().add("root-element");
 
-        final Scene scene = new Scene(rootElement, 720, 480);
+        final Scene scene = new Scene(rootElement, 780, 540);
         {
-            final Label titel = new Label(Irrlicht.NAME + " - " + Irrlicht.VERSION + " developed by " + Arrays.toString(Irrlicht.AUTHORS));
-            titel.setPadding(new Insets(2, 2, 2, 6));
+            final Label title = new Label(Irrlicht.NAME + " - " + Irrlicht.VERSION + " developed by " + Arrays.toString(Irrlicht.AUTHORS));
+            title.setPadding(new Insets(2, 2, 2, 6));
             final Button close = new Button("X");
             close.setOnAction(event -> Platform.exit());
 
-            final HBox left = new HBox(titel);
+            final HBox left = new HBox(title);
             final HBox right = new HBox(close);
             HBox.setHgrow(left, Priority.ALWAYS);
             HBox.setHgrow(right, Priority.ALWAYS);
@@ -235,6 +284,7 @@ public class Main extends Application
         scene.getStylesheets().add("/launcher.css");
         stage.setScene(scene);
         stage.initStyle(StageStyle.UNDECORATED);
+
         stage.show();
     }
 
@@ -242,5 +292,11 @@ public class Main extends Application
     {
         System.loadLibrary("attach");
         launch(args);
+    }
+
+    @Override
+    public File getLauncherDir()
+    {
+        return LAUNCHER_LOC;
     }
 }

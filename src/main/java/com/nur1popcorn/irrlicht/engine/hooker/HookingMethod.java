@@ -20,6 +20,7 @@
 package com.nur1popcorn.irrlicht.engine.hooker;
 
 import com.nur1popcorn.irrlicht.engine.events.Event;
+import com.nur1popcorn.irrlicht.engine.events.impl.LocalVariableEvent;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -27,8 +28,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The {@link HookingMethod} is responsible for telling the hooker which and how the method is
- * supposed to be hooked.
+ * The {@link HookingMethod} is responsible for telling the hooker which and how the
+ * method is supposed to be hooked.
  *
  * @see Hooker
  * @see Event
@@ -52,15 +53,35 @@ public @interface HookingMethod
     /**
      * @see Hooker
      *
-     * @return checks used to find the location at which the hook is supposed to be added.
+     * @return checks used to find the location at which the hook is supposed to be
+     *         added.
      */
     public int flags() default Hooker.DEFAULT | Hooker.BEFORE;
 
     /**
-     * When using the the opcodes flag a number of for the function unique opcodes are required inorder to
-     * specify the location which the hook is supposed to be added.
+     * @see Hooker
+     *
+     * When using the the opcodes flag a number of for the function unique opcodes
+     * are required inorder to specify the location which the hook is supposed to
+     * be added.
      *
      * @return a number of for the function unique opcodes.
      */
     public int[] opcodes() default { };
+
+    /**
+     * @see Hooker
+     *
+     * @return The indices of the local variables which should be passed to the
+     *         {@link Event}'s constructor.
+     */
+    public int[] indices() default { };
+
+    /**
+     * @see Hooker
+     *
+     * @return This is useful for events which attempt to overwrite local variables ie.
+     *         {@link LocalVariableEvent}.
+     */
+    public int[] overwrite() default { };
 }

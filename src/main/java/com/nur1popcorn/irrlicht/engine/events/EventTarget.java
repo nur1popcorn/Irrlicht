@@ -41,5 +41,10 @@ public @interface EventTarget
     /**
      * @return the {@link Priority} of the listener.
      */
-    public Priority value() default Priority.NORMAL;
+    public Priority priority() default Priority.NORMAL;
+
+    /**
+     * @return whether or not the {@link Event} should be ignored if it is cancelled.
+     */
+    public boolean ignoreCancelled() default false;
 }

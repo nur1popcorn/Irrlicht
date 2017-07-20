@@ -17,26 +17,14 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.engine.hooker;
-
-import org.objectweb.asm.tree.MethodNode;
+package com.nur1popcorn.irrlicht.engine.wrappers.client.entity;
 
 /**
- * The {@link HookingMethod} is responsible for handling custom checks.
- *
- * @see Hooker
- * @see com.nur1popcorn.irrlicht.engine.events.Event
- * @see MethodNode
+ * The {@link PlayerMpOther} represents other players on the server.
  *
  * @author nur1popcorn
- * @since 1.0.0-alpha
+ * @since 1.1.0-alpha
  */
-public interface HookingHandler
+public interface PlayerMpOther extends ClientPlayer
 {
-    /**
-     * Adds a custom hook to the {@link MethodNode} provided.
-     *
-     * @param methodNode the {@link MethodNode} which the hook is supposed to be added to.
-     */
-    public void hook(MethodNode methodNode);
 }

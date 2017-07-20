@@ -20,15 +20,16 @@
 package com.nur1popcorn.irrlicht.utils;
 
 import com.nur1popcorn.irrlicht.launcher.LogOutput;
+import com.nur1popcorn.irrlicht.launcher.rmi.ILogOutput;
+import com.nur1popcorn.irrlicht.launcher.rmi.impl.RmiManager;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.util.Base64;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.*;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+import java.util.logging.StreamHandler;
 
 /**
  * The {@link LoggerFactory} is used to assemble and store loggers that connect to
@@ -42,20 +43,7 @@ import java.util.logging.*;
 public class LoggerFactory
 {
     private static final Map<Class, Logger> LOGGER_MAP = new HashMap<>();
-    private static SocketHandler socketHandler;
-
-    static
-    {
-        try
-        {
-            socketHandler = new SocketHandler("localhost", LogOutput.SERVER_PORT);
-            socketHandler.setFormatter(new SocketFormatter());
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
+    private static final RmiHandler RMI_HANDLER = new RmiHandler();
 
     //prevent construction :/
     private LoggerFactory()
@@ -72,45 +60,28 @@ public class LoggerFactory
             return LOGGER_MAP.get(clazz);
         final Logger logger = Logger.getLogger(clazz.getName());
         logger.setUseParentHandlers(false);
-        logger.addHandler(socketHandler);
+        logger.addHandler(RMI_HANDLER);
         logger.setLevel(Level.ALL);
         LOGGER_MAP.put(clazz, logger);
         return logger;
     }
 
-    /**
-     * This class is used to format the record before being sent to the logging server.
-     */
-    public static class SocketFormatter extends Formatter
+    public static class RmiHandler extends StreamHandler
     {
+        private static final ILogOutput LOG_OUTPUT = (ILogOutput) RmiManager.getRMI("LogOutput");
+
         @Override
-        public String format(LogRecord record)
+        public synchronized void publish(LogRecord record)
         {
-            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             try
             {
                 record.getSourceMethodName(); //obtain caller class before serialization.
-                final ObjectOutput objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-                objectOutputStream.writeObject(record);
-                objectOutputStream.flush();
-                return Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray()) + "\n";
+                LOG_OUTPUT.log(record);
             }
-            catch (IOException e)
+            catch (RemoteException e)
             {
                 e.printStackTrace();
             }
-            finally
-            {
-                try
-                {
-                    byteArrayOutputStream.close();
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-            return null;
         }
     }
 }

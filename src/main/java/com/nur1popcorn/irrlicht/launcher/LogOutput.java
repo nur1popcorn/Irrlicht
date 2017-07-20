@@ -19,6 +19,8 @@
 
 package com.nur1popcorn.irrlicht.launcher;
 
+import com.nur1popcorn.irrlicht.launcher.rmi.ILogOutput;
+import com.nur1popcorn.irrlicht.launcher.rmi.impl.RmiManager;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -28,12 +30,9 @@ import javafx.css.PseudoClass;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 
-import java.io.*;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.MessageFormat;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -43,17 +42,16 @@ import java.util.logging.LogRecord;
 /**
  * The {@link LogOutput} is used to display the clients logs.
  *
- * @see Main
+ * @see Launcher
  * @see LogRecord
  * @see com.nur1popcorn.irrlicht.utils.LoggerFactory
  *
  * @author nur1popcorn
  * @since 1.0.0-alpha
  */
-public class LogOutput extends ListView<LogRecord>
+public class LogOutput extends ListView<LogRecord> implements ILogOutput
 {
-    public static final int SERVER_PORT = 25560,
-                            MAX_ENTRIES = 10_000;
+    public static final int MAX_ENTRIES = 10_000;
 
     private BooleanProperty showTimestamp = new SimpleBooleanProperty(true),
                             showCaller = new SimpleBooleanProperty(true),
@@ -67,60 +65,10 @@ public class LogOutput extends ListView<LogRecord>
 
     public LogOutput()
     {
-        getStyleClass().add("log-output");
-        final Thread thread = new Thread(() -> {
-            try
-            {
-                final ServerSocket serverSocket = new ServerSocket(SERVER_PORT, 0, InetAddress.getByName("localhost"));
-                for(;;)
-                {
-                    if(logRecords.size() == MAX_ENTRIES)
-                        break;
+        RmiManager.getInstance()
+                  .register("LogOutput", this);
 
-                    Socket socket = null;
-                    ObjectInputStream objectInputStream = null;
-                    try
-                    {
-                        socket = serverSocket.accept();
-                        final InputStream is = socket.getInputStream();
-                        final BufferedReader br = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
-                        String line = null;
-                        while ((line = br.readLine()) != null)
-                        {
-                            objectInputStream = new ObjectInputStream(new ByteArrayInputStream(Base64.getDecoder().decode(line)));
-                            final Object object = objectInputStream.readObject();
-                            if(object instanceof LogRecord)
-                                Platform.runLater(() -> logRecords.add((LogRecord) object));
-                        }
-                    }
-                    catch (IOException | ClassNotFoundException e)
-                    {
-                        e.printStackTrace();
-                    }
-                    finally
-                    {
-                        try
-                        {
-                            if(socket != null)
-                                socket.close();
-                            if(objectInputStream != null)
-                                objectInputStream.close();
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-            catch (IOException e)
-            {
-                logRecords.add(new LogRecord(Level.SEVERE, "Could not bind port " + SERVER_PORT + " logging will be disabled."));
-                e.printStackTrace();
-            }
-        }, "Logging-Server-Thread");
-        thread.setDaemon(true);
-        thread.start();
+        getStyleClass().add("log-output");
 
         setItems(new FilteredList<>(logRecords, logRecord -> filter.get() == null || logRecord.getLevel().equals(filter.get())));
         filter.addListener(observable -> setItems(new FilteredList<>(logRecords, logRecord -> filter.get() == null || logRecord.getLevel().equals(filter.get()))));
@@ -139,7 +87,7 @@ public class LogOutput extends ListView<LogRecord>
                 super.updateItem(record, empty);
 
                 if(record != null &&
-                        !empty)
+                   !empty)
                 {
                     final StringWriter stringWriter = new StringWriter();
                     if (record.getThrown() != null)
@@ -167,6 +115,13 @@ public class LogOutput extends ListView<LogRecord>
                     setText(null);
             }
         });
+    }
+
+    @Override
+    public void log(LogRecord logRecord)
+    {
+        if(logRecords.size() != MAX_ENTRIES)
+            Platform.runLater(() -> logRecords.add(logRecord));
     }
 
     /**

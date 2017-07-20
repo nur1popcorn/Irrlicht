@@ -298,4 +298,23 @@ public class FontRenderer
     {
         return maxHeight / 4;
     }
+
+    @Override
+    public int hashCode()
+    {
+        return font.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        return obj == this || (obj instanceof FontRenderer && ((FontRenderer) obj).font.equals(font));
+    }
+
+    @Override
+    protected void finalize() throws Throwable
+    {
+        free();
+        super.finalize();
+    }
 }

@@ -22,11 +22,15 @@ package com.nur1popcorn.irrlicht;
 import com.nur1popcorn.irrlicht.engine.exceptions.MappingException;
 import com.nur1popcorn.irrlicht.engine.hooker.Hooker;
 import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
+import com.nur1popcorn.irrlicht.management.GameConfig;
 
 import java.lang.instrument.Instrumentation;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * The {@link Agent} is the programs entry point.
+ * The {@link Agent} is the agent's entry point.
  *
  * @see Mapper
  * @see Hooker
@@ -37,15 +41,38 @@ import java.lang.instrument.Instrumentation;
  */
 public class Agent
 {
+    public static void premain(String args, Instrumentation instrumentation)
+    {
+        agentmain(args, instrumentation);
+    }
+
     public static void agentmain(String args, Instrumentation instrumentation)
     {
-        try {
+        final Map<String, String[]> agentParameters = new HashMap<>();
+        for(String s : args.split(","))
+        {
+            final String[] values = s.split("=");
+            if(values.length < 2)
+                continue;
+            agentParameters.put(values[0], Arrays.copyOfRange(values, 1, values.length));
+        }
+        try
+        {
+            Irrlicht.bootstrap(
+                new GameConfig(
+                    agentParameters.get("version")[0],
+                    agentParameters.get("gameDir")[0],
+                    agentParameters.get("assetsDir")[0],
+                    agentParameters.get("main")[0]
+                )
+            );
             Mapper.getInstance()
                   .generate();
-            Hooker.getInstance()
+            Hooker.createHooker()
                   .hook(instrumentation);
-            Irrlicht.bootstrap();
-        } catch (MappingException e) {
+        }
+        catch (MappingException | ClassNotFoundException e)
+        {
             e.printStackTrace();
         }
     }

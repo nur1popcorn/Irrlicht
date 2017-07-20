@@ -185,8 +185,7 @@ public class ASMUtils
            clazz.isArray())
             return false;
 
-        ClassNode classNode = getClassNode(clazz);
-        return ((List<MethodNode>)classNode.methods).stream()
+        return ((List<MethodNode>)getClassNode(clazz).methods).stream()
                 .anyMatch(methodNode -> {
                     final Iterator iterator = methodNode.instructions.iterator();
                     while(iterator.hasNext())
@@ -331,16 +330,16 @@ public class ASMUtils
     }
 
     /**
-     * @param methodNode the {@link MethodNode} which should be formatted.
+     * @param insnList the {@link InsnList} which should be formatted.
      *
-     * @return a formatted version of the instructions in the {@link MethodNode}.
+     * @return a string of bytecode instructions.
      */
-    public static String formatInstructions(MethodNode methodNode)
+    public static String formatInstructions(InsnList insnList)
     {
         final Printer printer = new Textifier();
         final TraceMethodVisitor traceMethodVisitor = new TraceMethodVisitor(printer);
         final StringBuilder stringBuilder = new StringBuilder();
-        final Iterator<AbstractInsnNode> insnNodeIterator = methodNode.instructions.iterator();
+        final Iterator<AbstractInsnNode> insnNodeIterator = insnList.iterator();
         while(insnNodeIterator.hasNext())
         {
             final AbstractInsnNode insnNode = insnNodeIterator.next();

@@ -17,26 +17,33 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.engine.hooker;
+package com.nur1popcorn.irrlicht.engine.events.impl;
 
-import org.objectweb.asm.tree.MethodNode;
+import com.nur1popcorn.irrlicht.engine.events.Event;
+import com.nur1popcorn.irrlicht.engine.events.ICancellableEvent;
 
 /**
- * The {@link HookingMethod} is responsible for handling custom checks.
+ * The {@link CancellableEvent} is a {@link Event} which can be cancelled typically resulting
+ * in the rest of the caller method being ignored.
  *
- * @see Hooker
- * @see com.nur1popcorn.irrlicht.engine.events.Event
- * @see MethodNode
+ * @see Event
  *
  * @author nur1popcorn
- * @since 1.0.0-alpha
+ * @since 1.0.1-alpha
  */
-public interface HookingHandler
+public class CancellableEvent implements ICancellableEvent
 {
-    /**
-     * Adds a custom hook to the {@link MethodNode} provided.
-     *
-     * @param methodNode the {@link MethodNode} which the hook is supposed to be added to.
-     */
-    public void hook(MethodNode methodNode);
+    private boolean cancelled;
+
+    @Override
+    public boolean isCancelled()
+    {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled)
+    {
+        this.cancelled = cancelled;
+    }
 }
