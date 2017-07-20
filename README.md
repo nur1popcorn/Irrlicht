@@ -215,6 +215,8 @@ All one would have to do now is to create an instance of your class and register
   * Added new event-system.
 * 1.0.2-alpha
   * Fully implemented [`CancellableEvent`](https://github.com/nur1popcorn/Irrlicht/blob/master/src/main/java/com/nur1popcorn/irrlicht/engine/events/CancellableEvent.java)s.
+* 1.1.0-alpha
+  * -Taking a break
 
 ## Contributing
 *NOTE:* **DO NOT** contribute to the gui as I am currently rewriting big portions of it.<br/>
