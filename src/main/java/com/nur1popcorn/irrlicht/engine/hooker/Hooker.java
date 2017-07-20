@@ -19,16 +19,18 @@
 
 package com.nur1popcorn.irrlicht.engine.hooker;
 
-import com.nur1popcorn.irrlicht.engine.events.CancellableEvent;
-import com.nur1popcorn.irrlicht.engine.events.EventManager;
 import com.nur1popcorn.irrlicht.engine.events.Event;
+import com.nur1popcorn.irrlicht.engine.events.EventManager;
+import com.nur1popcorn.irrlicht.engine.events.ICancellableEvent;
+import com.nur1popcorn.irrlicht.engine.events.ILocalVariableEvent;
 import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.Wrapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.entity.PlayerSp;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.gui.GuiIngame;
+import com.nur1popcorn.irrlicht.engine.wrappers.client.network.NetworkManager;
 import com.nur1popcorn.irrlicht.utils.ASMUtils;
 import com.nur1popcorn.irrlicht.utils.LoggerFactory;
-import com.nur1popcorn.irrlicht.utils.TimeHelper;
+import com.nur1popcorn.irrlicht.management.TimeHelper;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
@@ -60,7 +62,6 @@ import java.util.logging.Logger;
 public class Hooker
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(Hooker.class);
-    private static Hooker instance;
 
     /**
      * <b>Custom</b>
@@ -113,7 +114,6 @@ public class Hooker
 
     private List<Class<? extends Wrapper>> hookingTargets = new ArrayList<>();
     private Map<Method, List<HookingHandler>> hookingHandlers = new HashMap<>();
-    private boolean hooked;
 
     //prevent construction :/
     private Hooker()
@@ -122,25 +122,16 @@ public class Hooker
     /**
      * Factory method to create a default {@link Hooker}.
      *
-     * @see #getInstance()
-     *
      * @return a default {@link Hooker}.
      */
-    private static Hooker createHooker()
+    public static Hooker createHooker()
     {
         final Hooker hooker = new Hooker();
+        //hooker.register(Mapper.DisplayWrapper.class); //hook #swapBuffers method.
         hooker.register(PlayerSp.class);
         hooker.register(GuiIngame.class);
+        hooker.register(NetworkManager.class);
         return hooker;
-    }
-
-    /**
-     * @return an instance of the {@link Hooker} or if non is available it creates
-     *         one.
-     */
-    public static Hooker getInstance()
-    {
-        return instance != null ? instance : (instance = createHooker());
     }
 
     /**
@@ -195,11 +186,6 @@ public class Hooker
         hookingHandlers.remove(method);
     }
 
-    public static void debug()
-    {
-        LOGGER.log(Level.INFO, "cancelled.");
-    }
-
     /**
      * <p>This method will place all the required hooks.</p>
      * <p><i>Note:</i> This method should only be called once.</p>
@@ -208,8 +194,6 @@ public class Hooker
      */
     public void hook(Instrumentation instrumentation)
     {
-        if(hooked)
-            return;
         final TimeHelper timeHelper = new TimeHelper();
         LOGGER.log(Level.INFO, "Started hooking classes.");
         try
@@ -229,27 +213,86 @@ public class Hooker
                         {
                             final InsnList injection = new InsnList();
                             {
-                                //setup injection
+                                //setup injection.
+                                final LabelNode start = new LabelNode();
+                                final LabelNode end = new LabelNode();
+                                injection.add(start);
                                 final Class eventClass = hookingMethod.value();
                                 final String value = Type.getInternalName(eventClass);
-                                injection.add(new TypeInsnNode(Opcodes.NEW, value));
-                                injection.add(new InsnNode(Opcodes.DUP));
-                                injection.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, value, "<init>", "()V", false));
+                                {
+                                    //call event constructor.
+                                    injection.add(new TypeInsnNode(Opcodes.NEW, value));
+                                    injection.add(new InsnNode(Opcodes.DUP));
+                                    injection.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, value, "<init>", "()V", false));
+                                }
+
+                                final String object = Type.getInternalName(Object.class);
+                                final boolean localVar = ILocalVariableEvent.class.isAssignableFrom(eventClass);
+                                if(localVar)
+                                {
+                                    //hijack local variables.
+                                    final int index = methodNode.localVariables.size();
+                                    methodNode.localVariables.add(new LocalVariableNode(eventClass.getSimpleName().toLowerCase(), "L" + value + ";", null, start, end, index));
+                                    injection.add(new VarInsnNode(Opcodes.ASTORE, index));
+                                    injection.add(new VarInsnNode(Opcodes.ALOAD, index));
+
+                                    final int indices[] = hookingMethod.indices();
+                                    injection.add(new IntInsnNode(Opcodes.BIPUSH, indices.length));
+                                    injection.add(new TypeInsnNode(Opcodes.ANEWARRAY, object));
+                                    injection.add(new InsnNode(Opcodes.DUP));
+
+                                    for(int i = 0; i < indices.length; i++)
+                                    {
+                                        injection.add(new IntInsnNode(Opcodes.BIPUSH, i));
+                                        injection.add(new VarInsnNode(Opcodes.ALOAD, indices[i]));
+                                        injection.add(new InsnNode(Opcodes.AASTORE));
+                                        if(i < indices.length - 1)
+                                            injection.add(new InsnNode(Opcodes.DUP));
+                                    }
+                                    injection.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, value, "setLocalVariables", "([L" + object + ";)V", false));
+
+                                    injection.add(new VarInsnNode(Opcodes.ALOAD, index));
+                                }
+
                                 final String event = Type.getInternalName(Event.class);
                                 injection.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(EventManager.class), "call", "(L" + event + ";)L" + event + ";", false));
 
                                 if(method.getReturnType() == void.class &&
-                                   CancellableEvent.class.isAssignableFrom(eventClass))
+                                   ICancellableEvent.class.isAssignableFrom(eventClass))
                                 {
                                     //check if was cancelled and if so leave method.
-                                    final String cancellable = Type.getInternalName(CancellableEvent.class);
-                                    injection.add(new TypeInsnNode(Opcodes.CHECKCAST, cancellable));
-                                    injection.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cancellable, "isCancelled", "()Z", false));
+                                    injection.add(new TypeInsnNode(Opcodes.CHECKCAST, value));
+                                    injection.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, value, "isCancelled", "()Z", false));
                                     final LabelNode labelNode = new LabelNode();
                                     injection.add(new JumpInsnNode(Opcodes.IFEQ, labelNode));
                                     injection.add(new InsnNode(Opcodes.RETURN));
                                     injection.add(labelNode);
                                 }
+
+                                if(localVar)
+                                {
+                                    //replace old local variables.
+                                    final int index = methodNode.localVariables.size();
+                                    final LabelNode labelNode = new LabelNode();
+                                    injection.add(labelNode);
+                                    methodNode.localVariables.add(new LocalVariableNode("localVariables", "[L" + object + ";", null, labelNode, end, index));
+                                    injection.add(new VarInsnNode(Opcodes.ALOAD, index - 1));
+                                    injection.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, value, "getLocalVariables", "()[L" + object + ";", false));
+                                    injection.add(new VarInsnNode(Opcodes.ASTORE, index));
+
+                                    final int overwrite[] = hookingMethod.overwrite();
+                                    for(int i = 0; i < overwrite.length; i++)
+                                    {
+                                        injection.add(new VarInsnNode(Opcodes.ALOAD, index));
+                                        injection.add(new IntInsnNode(Opcodes.BIPUSH, i));
+                                        injection.add(new InsnNode(Opcodes.AALOAD));
+                                        final String desc = ((LocalVariableNode) methodNode.localVariables.get(overwrite[i])).desc;
+                                        injection.add(new TypeInsnNode(Opcodes.CHECKCAST, desc.startsWith("[") ? desc : new StringBuilder(desc).deleteCharAt(desc.length() - 1).deleteCharAt(0).toString()));
+                                        injection.add(new VarInsnNode(Opcodes.ASTORE, overwrite[i]));
+                                    }
+                                }
+
+                                injection.add(end);
                             }
                             //check injection method.
                             if((flags & OPCODES) != 0 &&
@@ -266,7 +309,7 @@ public class Hooker
 
                         if((flags & CUSTOM) != 0)
                             for(HookingHandler hookingHandler : hookingHandlers.get(method))
-                                hookingHandler.hook(methodNode.instructions);
+                                hookingHandler.hook(methodNode);
                         LOGGER.log(Level.INFO, "    Hooking method " + method + ".");
                     }
                 }
@@ -279,14 +322,5 @@ public class Hooker
             e.printStackTrace();
         }
         LOGGER.log(Level.INFO, "Finished hooking classes in: " + timeHelper.getMSPassed() + "ms.");
-        hooked = true;
-    }
-
-    /**
-     * @return whether or not the hooking process was successful.
-     */
-    public boolean isHooked()
-    {
-        return hooked;
     }
 }
