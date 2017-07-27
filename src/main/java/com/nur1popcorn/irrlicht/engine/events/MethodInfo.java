@@ -42,7 +42,6 @@ public class MethodInfo
 
     public MethodInfo(Method method, Object handle, Priority priority, boolean ignoreCancelled)
     {
-        assert method != null && handle != null && priority != null;
         this.method = method;
         this.handle = handle;
         this.priority = priority;
@@ -84,7 +83,6 @@ public class MethodInfo
     @Override
     public int hashCode()
     {
-        //used to put the methodinfos in the correct order.
         return priority.ordinal();
     }
 }

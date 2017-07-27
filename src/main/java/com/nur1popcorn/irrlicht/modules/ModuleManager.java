@@ -103,11 +103,11 @@ public class ModuleManager
      *
      * @return a {@link Module} based on the class provided.
      */
-    public Module getModule(Class clazz)
+    public <T extends Module> T getModule(Class<T> clazz)
     {
         for(Module module : modules)
             if(module.getClass() == clazz)
-                return module;
+                return (T) module;
         return null;
     }
 

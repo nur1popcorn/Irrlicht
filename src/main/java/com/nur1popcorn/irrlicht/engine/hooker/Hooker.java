@@ -317,7 +317,7 @@ public class Hooker
                 return new ClassDefinition(mappedClass, ASMUtils.getBytes(ASMUtils.getClassNode(mappedClass)));
             }).toArray(ClassDefinition[]::new));
         }
-        catch (ClassNotFoundException | UnmodifiableClassException e)
+        catch(ClassNotFoundException | UnmodifiableClassException e)
         {
             e.printStackTrace();
         }

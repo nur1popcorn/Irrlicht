@@ -62,11 +62,11 @@ public class FontRenderer
      */
     private int generateTexture(Font font)
     {
-        BufferedImage bufferedImage = new BufferedImage(TEXTURE_SIZE, TEXTURE_SIZE, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = (Graphics2D) bufferedImage.getGraphics();
+        final BufferedImage bufferedImage = new BufferedImage(TEXTURE_SIZE, TEXTURE_SIZE, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D graphics = (Graphics2D) bufferedImage.getGraphics();
         graphics.setColor(Color.WHITE);
         graphics.setFont(font);
-        Map desktopHints = (Map) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
+        final Map desktopHints = (Map) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
         if(desktopHints != null)
             graphics.setRenderingHints(desktopHints);
         final FontMetrics fontMetrics = graphics.getFontMetrics();

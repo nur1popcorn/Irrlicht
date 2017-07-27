@@ -56,6 +56,7 @@ public class Agent
                 continue;
             agentParameters.put(values[0], Arrays.copyOfRange(values, 1, values.length));
         }
+
         try
         {
             Irrlicht.bootstrap(

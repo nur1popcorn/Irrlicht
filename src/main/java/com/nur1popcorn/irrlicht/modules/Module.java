@@ -94,8 +94,7 @@ public class Module
      */
     public void toggle()
     {
-        toggled = !toggled;
-        if(toggled)
+        if(toggled = !toggled)
             onEnable();
         else
             onDisable();

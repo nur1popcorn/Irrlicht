@@ -21,10 +21,16 @@ package com.nur1popcorn.irrlicht.engine.mapper;
 
 import com.nur1popcorn.irrlicht.engine.wrappers.Wrapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.gui.GuiScreen;
+import com.nur1popcorn.irrlicht.utils.LoggerFactory;
+import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The {@link WrapperBridge} is responsible for redirecting method calls to an obfuscated
@@ -57,9 +63,18 @@ public abstract class WrapperBridge implements Wrapper
         proxyFactory.setSuperclass(mapper.getMappedClass(clazz));
         try
         {
-            return handle = proxyFactory.create(null, null, (Object proxy, Method thisMethod, Method proceed, Object[] args) -> {
-                for(Method method : GuiScreen.class.getDeclaredMethods())
-                    if(mapper.getMappedMethod(method).equals(thisMethod))
+            return handle = proxyFactory.create(null, null, new MethodHandler() {
+                final Map<Method, Method> methodMap = new HashMap<>();
+                {
+                    for(Method method : clazz.getDeclaredMethods())
+                        methodMap.put(mapper.getMappedMethod(method), method);
+                }
+
+                @Override
+                public Object invoke(Object proxy, Method thisMethod, Method proceed, Object[] args) throws Throwable
+                {
+                    Method method = methodMap.get(thisMethod);
+                    if(method != null)
                     {
                         final Class types[] = method.getParameterTypes();
                         final Object handledArgs[] = new Object[args.length];
@@ -69,13 +84,14 @@ public abstract class WrapperBridge implements Wrapper
                                     args[i];
                         return method.invoke(this, handledArgs);
                     }
-                return null;
+                    return null;
+                }
             });
         }
         catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e)
         {
             e.printStackTrace();
-            throw new RuntimeException("Failed to create WrapperBridge for: " );
+            throw new RuntimeException("Failed to create WrapperBridge.");
         }
     }
 }
