@@ -163,10 +163,10 @@ public class RenderUtils
             for(int x = 0; x < bufferedImage.getWidth(); x++)
             {
                 final int pixel = pixels[y * bufferedImage.getWidth() + x];
-                buffer.put((byte)((pixel >> 16) & 0xFF));
-                buffer.put((byte)((pixel >> 8) & 0xFF));
+                buffer.put((byte)((pixel >> 16) & 0xff));
+                buffer.put((byte)((pixel >> 8) & 0xff));
                 buffer.put((byte)(pixel & 0xFF));
-                buffer.put((byte)((pixel >> 24) & 0xFF));
+                buffer.put((byte)((pixel >> 24) & 0xff));
             }
         buffer.flip();
 
@@ -226,10 +226,10 @@ public class RenderUtils
     public static void glColor(int color)
     {
         glColor4f(
-            (color >> 16 & 255) / 255f,
-            (color >> 8 & 255) / 255f,
+            (color >> 16 & 0xff) / 255f,
+            (color >> 8 & 0xff) / 255f,
             (color & 255) / 255f,
-            (color >> 24 & 255) / 255f
+            (color >> 24 & 0xff) / 255f
         );
     }
 
