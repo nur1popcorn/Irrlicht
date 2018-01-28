@@ -45,20 +45,8 @@ public class Timer extends Module
     @ValueTarget
     private SliderValue<Float> timerSpeed = new SliderValue<>(this, "Speed", 1f, 0.1f, 10f, 0.1f);
 
-    @Override
-    public void onDisable()
+    public float getTimerSpeed()
     {
-        super.onDisable();
-        Irrlicht.getMinecraft()
-                .getTimer()
-                .setTimerSpeed(1);
-    }
-
-    @EventTarget
-    public void onUpdate(UpdateEvent event)
-    {
-        Irrlicht.getMinecraft()
-                .getTimer()
-                .setTimerSpeed(timerSpeed.value);
+        return isToggled() ? timerSpeed.value : 1.0f;
     }
 }

@@ -22,9 +22,6 @@ package com.nur1popcorn.irrlicht.utils;
 import com.nur1popcorn.irrlicht.Irrlicht;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.entity.PlayerSp;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 /**
  * The {@link MovementUtils} is an util providing all sorts of movement helpers.
  *

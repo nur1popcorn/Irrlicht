@@ -19,6 +19,7 @@
 
 package com.nur1popcorn.irrlicht.engine.hooker;
 
+import com.nur1popcorn.irrlicht.Irrlicht;
 import com.nur1popcorn.irrlicht.engine.events.Event;
 import com.nur1popcorn.irrlicht.engine.events.EventManager;
 import com.nur1popcorn.irrlicht.engine.events.ICancellableEvent;
@@ -27,7 +28,10 @@ import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.Wrapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.entity.PlayerSp;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.gui.GuiIngame;
+import com.nur1popcorn.irrlicht.engine.wrappers.client.minecraft.Timer;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.network.NetworkManager;
+import com.nur1popcorn.irrlicht.modules.Module;
+import com.nur1popcorn.irrlicht.modules.ModuleManager;
 import com.nur1popcorn.irrlicht.utils.ASMUtils;
 import com.nur1popcorn.irrlicht.utils.LoggerFactory;
 import com.nur1popcorn.irrlicht.management.TimeHelper;
@@ -131,6 +135,51 @@ public class Hooker
         hooker.register(PlayerSp.class);
         hooker.register(GuiIngame.class);
         hooker.register(NetworkManager.class);
+        hooker.register(Timer.class);
+        hooker.register(ASMUtils.getMethod(Timer.class, "updateTimer()V"), (HookingHandler) methodNode -> {
+            final InsnList injection = new InsnList();
+            {
+                final String irrlicht = Type.getInternalName(Irrlicht.class);
+                injection.add(new MethodInsnNode(Opcodes.INVOKESTATIC, irrlicht, "getIrrlicht", "()L" + irrlicht + ";", false));
+                final String moduleManager = Type.getInternalName(ModuleManager.class);
+                injection.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, irrlicht, "getModuleManager", "()L" + moduleManager + ";", false));
+                final String timer = Type.getInternalName(com.nur1popcorn.irrlicht.modules.impl.misc.Timer.class);
+                injection.add(new LdcInsnNode(Type.getType("L" + timer + ";")));
+                final String module = Type.getInternalName(Module.class);
+                injection.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, moduleManager, "getModule", "(Ljava/lang/Class;)L" + module + ";", false));
+                injection.add(new TypeInsnNode(Opcodes.CHECKCAST, timer));
+                injection.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, timer, "getTimerSpeed", "()F", false));
+            }
+            final AbstractInsnNode instructions[] = methodNode.instructions.toArray();
+            final boolean minecraft = instructions.length <= 51;
+            final int[] opcodes = minecraft ?
+                    new int[] { Opcodes.FDIV } :
+                    new int[] {
+                        Opcodes.ALOAD,
+                        Opcodes.DUP,
+                        Opcodes.GETFIELD,
+                        Opcodes.F2D,
+                        Opcodes.DLOAD };
+            for(int i = 0; i < instructions.length; i++)
+            {
+                if(ASMUtils.checkInstructionMatch(methodNode.instructions, opcodes, i))
+                {
+                    final AbstractInsnNode abstractInsnNode = instructions[i + opcodes.length - 1];
+                    if(minecraft)
+                    {
+                        injection.add(new InsnNode(Opcodes.FMUL));
+                        methodNode.instructions.insert(abstractInsnNode, injection);
+                    }
+                    else
+                    {
+                        methodNode.instructions.remove(abstractInsnNode.getNext().getNext());
+                        methodNode.instructions.insert(abstractInsnNode.getNext(), injection);
+                        methodNode.instructions.remove(abstractInsnNode.getNext());
+                    }
+                    break;
+                }
+            }
+        });
         return hooker;
     }
 
