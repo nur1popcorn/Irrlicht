@@ -170,9 +170,10 @@ public class Hooker
                     }
                     else
                     {
-                        methodNode.instructions.remove(abstractInsnNode.getNext().getNext());
-                        methodNode.instructions.insert(abstractInsnNode.getNext(), injection);
-                        methodNode.instructions.remove(abstractInsnNode.getNext());
+                        final AbstractInsnNode next = abstractInsnNode.getNext();
+                        methodNode.instructions.remove(next.getNext());
+                        methodNode.instructions.insert(next, injection);
+                        methodNode.instructions.remove(next);
                     }
                     break;
                 }
