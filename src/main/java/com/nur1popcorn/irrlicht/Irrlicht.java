@@ -66,7 +66,8 @@ public class Irrlicht
      */
     public static final String AUTHORS[] =
     {
-        "nur1popcorn"
+        "nur1popcorn",
+        "Siphedrion"
     };
 
     private static Irrlicht instance;
