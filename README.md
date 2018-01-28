@@ -217,6 +217,7 @@ Other than that, just create a new pull request.
 
 ## Authors
 - **nur1popcorn** *(Hackerman)* - *Inital work*
+- **Siphedrion**
 
 ## License
 Copyright (C) Keanu Poeschko - All Rights Reserved
