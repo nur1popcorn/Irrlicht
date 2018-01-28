@@ -145,27 +145,25 @@ public class Hooker
                 injection.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, irrlicht, "getModuleManager", "()L" + moduleManager + ";", false));
                 final String timer = Type.getInternalName(com.nur1popcorn.irrlicht.modules.impl.misc.Timer.class);
                 injection.add(new LdcInsnNode(Type.getType("L" + timer + ";")));
-                final String module = Type.getInternalName(Module.class);
-                injection.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, moduleManager, "getModule", "(Ljava/lang/Class;)L" + module + ";", false));
+                injection.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, moduleManager, "getModule", "(Ljava/lang/Class;)L" + Type.getInternalName(Module.class) + ";", false));
                 injection.add(new TypeInsnNode(Opcodes.CHECKCAST, timer));
                 injection.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, timer, "getTimerSpeed", "()F", false));
             }
             final AbstractInsnNode instructions[] = methodNode.instructions.toArray();
-            final boolean minecraft = instructions.length <= 51;
-            final int[] opcodes = minecraft ?
+            final int[] opcodes = instructions.length <= 51 ?
                     new int[] { Opcodes.FDIV } :
                     new int[] {
                         Opcodes.ALOAD,
                         Opcodes.DUP,
                         Opcodes.GETFIELD,
                         Opcodes.F2D,
-                        Opcodes.DLOAD };
+                        Opcodes.DLOAD
+                    };
             for(int i = 0; i < instructions.length; i++)
-            {
                 if(ASMUtils.checkInstructionMatch(methodNode.instructions, opcodes, i))
                 {
                     final AbstractInsnNode abstractInsnNode = instructions[i + opcodes.length - 1];
-                    if(minecraft)
+                    if(instructions.length <= 51)
                     {
                         injection.add(new InsnNode(Opcodes.FMUL));
                         methodNode.instructions.insert(abstractInsnNode, injection);
@@ -178,7 +176,6 @@ public class Hooker
                     }
                     break;
                 }
-            }
         });
         return hooker;
     }
