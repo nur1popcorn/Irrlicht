@@ -73,7 +73,7 @@ public abstract class WrapperBridge implements Wrapper
                 @Override
                 public Object invoke(Object proxy, Method thisMethod, Method proceed, Object[] args) throws Throwable
                 {
-                    Method method = methodMap.get(thisMethod);
+                    final Method method = methodMap.get(thisMethod);
                     if(method != null)
                     {
                         final Class types[] = method.getParameterTypes();
