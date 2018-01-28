@@ -1,6 +1,8 @@
 <p align="center">
    <img src="https://cdn.rawgit.com/nur1popcorn/Irrlicht/2f2e848d/Irrlicht.svg" width="480" height = "180">
 </p>
+
+* * *
   
 > Your cross-version cheating champ
 
@@ -215,6 +217,7 @@ Other than that, just create a new pull request.
 
 ## Authors
 - **nur1popcorn** *(Hackerman)* - *Inital work*
+- **Siphedrion**
 
 ## License
 Copyright (C) Keanu Poeschko - All Rights Reserved

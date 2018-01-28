@@ -19,10 +19,14 @@
 
 package com.nur1popcorn.irrlicht.engine.wrappers.client.minecraft;
 
+import com.nur1popcorn.irrlicht.engine.events.Event;
+import com.nur1popcorn.irrlicht.engine.hooker.Hooker;
+import com.nur1popcorn.irrlicht.engine.hooker.HookingMethod;
 import com.nur1popcorn.irrlicht.engine.mapper.DiscoveryMethod;
 import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.Wrapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.Minecraft;
+import org.objectweb.asm.Opcodes;
 
 /**
  * The {@link Timer} class is used to handle the game's timings like updates per second
@@ -37,42 +41,14 @@ import com.nur1popcorn.irrlicht.engine.wrappers.client.Minecraft;
 @DiscoveryMethod(declaring = Minecraft.class)
 public interface Timer extends Wrapper
 {
-    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.CONSTRUCTOR)
+    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.CONSTRUCTOR | Mapper.FIRST_MATCH | Mapper.OPCODES,
+            opcodes = {
+                    Opcodes.ALOAD,
+                    Opcodes.INVOKESTATIC,
+                    Opcodes.PUTFIELD
+            })
     public void construct(float ticksPerSecond);
-    
-    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD | Mapper.STRUCTURE_START)
-    public float getTicksPerSecond();
 
-    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
-    public double getLastHRTime();
-
-    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
-    public int getElapsedTicks();
-
-    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
-    public float getRenderPartialTicks();
-
-    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
-    public float getTimerSpeed();
-
-    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD | Mapper.STRUCTURE_END)
-    public float getElapsedPartialTicks();
-
-    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD | Mapper.STRUCTURE_START)
-    public void setTicksPerSecond(float ticksPerSecond);
-
-    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
-    public void setLastHRTime(double lastHRTime);
-
-    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
-    public void setElapsedTicks(int elapsedTicks);
-
-    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
-    public void setRenderPartialTicks(float renderPartialTicks);
-
-    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
-    public void setTimerSpeed(float timerSpeed);
-
-    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD | Mapper.STRUCTURE_END)
-    public void setElapsedPartialTicks(float elapsedPartialTicks);
+    @HookingMethod(value = Event.class, flags = Hooker.CUSTOM)
+    public void updateTimer();
 }
