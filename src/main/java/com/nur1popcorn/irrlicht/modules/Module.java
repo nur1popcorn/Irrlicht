@@ -38,7 +38,7 @@ import java.util.stream.Stream;
  * @author nur1popcorn
  * @since 1.0.0-alpha
  */
-public class Module
+public abstract class Module
 {
     private final String name = getClass().getAnnotation(ModuleInfo.class).name();
     private final Category category = getClass().getAnnotation(ModuleInfo.class).category();

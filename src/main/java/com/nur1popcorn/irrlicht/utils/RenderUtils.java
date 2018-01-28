@@ -22,6 +22,7 @@ package com.nur1popcorn.irrlicht.utils;
 import com.nur1popcorn.irrlicht.Irrlicht;
 import com.nur1popcorn.irrlicht.management.ScaledResolution;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.Display;
 
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
@@ -248,16 +249,22 @@ public class RenderUtils
     /**
      * Creates a scissor box at the given location.
      *
-     * @param top the y position of the top left vertex.
-     * @param left the x position of the top left vertex.
-     * @param bottom the y position of the bottom right vertex.
-     * @param right the x position of the bottom right vertex.
+     * @param x the x position.
+     * @param y the y position.
+     * @param width the width.
+     * @param height the height.
      *
      * @see ScaledResolution
      */
-    public static void prepareScissorBox(float top, float left, float bottom, float right)
+    public static void prepareScissorBox(float x, float y, float width, float height)
     {
-        ScaledResolution scaledResolution = new ScaledResolution(Irrlicht.getMinecraft().getGameSettings());
-        glScissor((int)(top * scaledResolution.getScaleFactor()), (int)((scaledResolution.getScaledHeight() - right) * scaledResolution.getScaleFactor()), (int)((bottom - top) * scaledResolution.getScaleFactor()), (int)((right - left) * scaledResolution.getScaleFactor()));
+        final ScaledResolution scaledResolution = new ScaledResolution(Irrlicht.getMinecraft().getGameSettings());
+        glScissor(
+            (int)(x * scaledResolution.getScaleFactor()),
+            (int)(Display.getHeight() - height * scaledResolution.getScaleFactor() - y * scaledResolution.getScaleFactor()),
+            (int)(width * scaledResolution.getScaleFactor()),
+            (int)(height * scaledResolution.getScaleFactor())
+        );
     }
+
 }

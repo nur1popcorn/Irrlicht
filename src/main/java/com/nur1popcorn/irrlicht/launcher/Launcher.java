@@ -178,7 +178,7 @@ public class Launcher extends Application implements ILauncher
                             inject.setDisable(true);
                             pidSelector.setDisable(true);
                             inject.setText("Attaching..");
-                            VirtualMachine vm = VirtualMachine.attach(vmd);
+                            final VirtualMachine vm = VirtualMachine.attach(vmd);
                             inject.setText("Loading agent..");
                             vm.loadAgent(LAUNCHER_LOC.getAbsolutePath(), "main=" + vmd.displayName().replaceAll(" --", ",").replaceAll(" ", "="));
                             inject.setText("Detaching..");

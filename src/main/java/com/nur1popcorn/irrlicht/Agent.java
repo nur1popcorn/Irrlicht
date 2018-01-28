@@ -52,9 +52,8 @@ public class Agent
         for(String s : args.split(","))
         {
             final String[] values = s.split("=");
-            if(values.length < 2)
-                continue;
-            agentParameters.put(values[0], Arrays.copyOfRange(values, 1, values.length));
+            if(values.length >= 2)
+                agentParameters.put(values[0], Arrays.copyOfRange(values, 1, values.length));
         }
 
         try

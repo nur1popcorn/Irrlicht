@@ -19,8 +19,12 @@
 
 package com.nur1popcorn.irrlicht.utils;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The {@link NumberUtils} is an util storing useful methods to do with {@link Number}s.
@@ -30,6 +34,11 @@ import java.math.BigInteger;
  */
 public class NumberUtils
 {
+    private static final Map<Class<? extends Number>, Method> NUMBER_CONVERSION_MAP = new HashMap<>(); static {
+        for(Method method : Number.class.getDeclaredMethods())
+            NUMBER_CONVERSION_MAP.put((Class<Number>) method.getReturnType(), method);
+    }
+
     //prevent construction :/
     private NumberUtils()
     {}
@@ -42,26 +51,15 @@ public class NumberUtils
      *
      * @return a converted version of the number cast to the class provided.
      */
-    public static Number convertToTarget(Number number, Class<? extends Number> clazz)
+    public static <T extends Number> T convertToTarget(Number number, Class<T> clazz)
     {
-        if(clazz.isInstance(number))
-            return number;
-        else if (clazz.equals(Integer.class))
-            return number.intValue();
-        else if(clazz.equals(Float.class))
-            return number.floatValue();
-        else if(clazz.equals(Double.class))
-            return number.doubleValue();
-        else if(clazz.equals(Long.class))
-            return number.longValue();
-        else if(clazz.equals(Byte.class))
-            return number.byteValue();
-        else if(clazz.equals(Short.class))
-            return number.shortValue();
-        else if(clazz.equals(BigInteger.class))
-            return BigInteger.valueOf(number.longValue());
-        else if(clazz.equals(BigDecimal.class))
-            return new BigDecimal(number.toString());
-        throw new RuntimeException("Could determine number type: " + clazz.getName());
+        try
+        {
+            return (T) NUMBER_CONVERSION_MAP.get(clazz).invoke(number);
+        }
+        catch (IllegalAccessException | InvocationTargetException e)
+        {
+            throw new RuntimeException("Could not determine correct conversion method for the provided number type.");
+        }
     }
 }

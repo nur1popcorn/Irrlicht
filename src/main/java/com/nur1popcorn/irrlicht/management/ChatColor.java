@@ -19,6 +19,8 @@
 
 package com.nur1popcorn.irrlicht.management;
 
+import java.util.regex.Pattern;
+
 /**
  * The {@link ChatColor} provides all chat colors supported by Minecraft for more info:
  * <a href="http://minecraft.gamepedia.com/Formatting_codes">formatting-codes</a>.
@@ -45,8 +47,9 @@ public enum ChatColor
     YELLOW("§e", 0xffffff55, 0xff3f3f15),
     WHITE("§f", 0xffffffff, 0xff3f3f3f);
 
-    private final String formattingCode;
+    public static final Pattern STRIP_COLOR = Pattern.compile("[§][0-9,a-f]");
 
+    private final String formattingCode;
     private final int foregroundColor,
                       backgroundColor;
 

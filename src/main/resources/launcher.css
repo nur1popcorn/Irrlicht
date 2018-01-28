@@ -12,13 +12,15 @@
     -fx-border-color: #1b1b1b;
 }
 
-.root-element, .log-output {
+.root-element,
+.log-output {
     -fx-background-color: #202020;
     -fx-border-color: linear-gradient(transparent, #32739B);
     -fx-border-width: 1;
 }
 
-.log-output-container, log-output {
+.log-output-container,
+log-output {
     -fx-border-color: linear-gradient(transparent, #32739B);
     -fx-border-width: 1;
 }
@@ -37,7 +39,11 @@
     -fx-border-radius: 3 3 3 3;
 }
 
-.scroll-bar, .track, .increment-button, .decrement-button, .corner {
+.scroll-bar,
+.track,
+.increment-button,
+.decrement-button,
+.corner {
     -fx-background-color: #202020;
     -fx-border-color: #202020;
 }
@@ -66,7 +72,10 @@
     -fx-text-fill: red;
 }
 
-.button, .toggle-button, .combo-box, .text-field {
+.button,
+.toggle-button,
+.combo-box,
+.text-field {
     -fx-background-color: linear-gradient(#404040, #323232);
     -fx-border-color: #101010;
     -fx-border-radius: 3 3 3 3;
@@ -74,17 +83,22 @@
     -fx-font-family: "Helvetica";
 }
 
-.button .text, .toggle-button .text, .combo-box .text, .label {
+.button .text,
+.toggle-button .text,
+.combo-box .text,
+.label {
     -fx-effect: dropshadow(gaussian, #101010, 0, 0, 0, 1);
     -fx-text-fill: white;
     -fx-fill: white;
 }
 
-.button:hover, .toggle-button:hover {
+.button:hover,
+.toggle-button:hover {
     -fx-background-color: linear-gradient(#505050, #424242);
 }
 
-.button:pressed, .toggle-button:pressed {
+.button:pressed,
+.toggle-button:pressed {
     -fx-background-color: linear-gradient(#303030, #222222);
 }
 
