@@ -19,8 +19,6 @@
 
 package com.nur1popcorn.irrlicht.engine.events;
 
-import com.sun.xml.internal.ws.api.Cancelable;
-
 import java.lang.reflect.Method;
 
 /**
@@ -45,7 +43,7 @@ public class MethodInfo
         this.method = method;
         this.handle = handle;
         this.priority = priority;
-        this.ignoreCancelled = Cancelable.class.isAssignableFrom(method.getParameterTypes()[0]) && ignoreCancelled;
+        this.ignoreCancelled = ICancellableEvent.class.isAssignableFrom(method.getParameterTypes()[0]) && ignoreCancelled;
     }
 
     /**

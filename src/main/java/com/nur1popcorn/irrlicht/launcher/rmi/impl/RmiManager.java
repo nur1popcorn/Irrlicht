@@ -20,7 +20,6 @@
 package com.nur1popcorn.irrlicht.launcher.rmi.impl;
 
 import com.nur1popcorn.irrlicht.launcher.rmi.IRmiManager;
-import javafx.application.Platform;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
