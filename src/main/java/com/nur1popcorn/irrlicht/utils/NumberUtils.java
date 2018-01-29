@@ -21,8 +21,6 @@ package com.nur1popcorn.irrlicht.utils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,9 +32,21 @@ import java.util.Map;
  */
 public class NumberUtils
 {
+    private static final Map<Class<?>, Class<?>> PRIMITIVE_TYPE_MAP = new HashMap<>(); static {
+        PRIMITIVE_TYPE_MAP.put(Byte.TYPE, Byte.class);
+        PRIMITIVE_TYPE_MAP.put(Short.TYPE, Short.class);
+        PRIMITIVE_TYPE_MAP.put(Integer.TYPE, Integer.class);
+        PRIMITIVE_TYPE_MAP.put(Long.TYPE, Long.class);
+        PRIMITIVE_TYPE_MAP.put(Double.TYPE, Double.class);
+        PRIMITIVE_TYPE_MAP.put(Float.TYPE, Float.class);
+    }
+
     private static final Map<Class<? extends Number>, Method> NUMBER_CONVERSION_MAP = new HashMap<>(); static {
-        for(Method method : Number.class.getDeclaredMethods())
-            NUMBER_CONVERSION_MAP.put((Class<Number>) method.getReturnType(), method);
+        for (Method method : Number.class.getDeclaredMethods())
+            NUMBER_CONVERSION_MAP.put(
+                    (Class<Number>) PRIMITIVE_TYPE_MAP.get(method.getReturnType()),
+                    method
+            );
     }
 
     //prevent construction :/
@@ -55,7 +65,7 @@ public class NumberUtils
     {
         try
         {
-            return (T) NUMBER_CONVERSION_MAP.get(clazz).invoke(number);
+            return clazz.cast(NUMBER_CONVERSION_MAP.get(clazz).invoke(number));
         }
         catch (IllegalAccessException | InvocationTargetException e)
         {
