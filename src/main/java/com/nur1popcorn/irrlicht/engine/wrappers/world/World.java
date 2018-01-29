@@ -24,7 +24,7 @@ import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.Wrapper;
 
 /**
- * The {@link World} represents Minecraft client world.
+ * The {@link World} represents Minecraft's client world.
  *
  * @see Wrapper
  * @see WorldClient

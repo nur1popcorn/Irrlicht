@@ -24,7 +24,7 @@ import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.entity.PlayerMpOther;
 
 /**
- * The {@link NetHandlerServer} handle incoming packets.
+ * The {@link NetHandlerServer} handles incoming packets.
  *
  * @see INetHandlerServer
  *

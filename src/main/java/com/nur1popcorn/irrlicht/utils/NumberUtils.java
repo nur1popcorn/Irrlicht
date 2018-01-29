@@ -44,8 +44,8 @@ public class NumberUtils
     private static final Map<Class<? extends Number>, Method> NUMBER_CONVERSION_MAP = new HashMap<>(); static {
         for (Method method : Number.class.getDeclaredMethods())
             NUMBER_CONVERSION_MAP.put(
-                    (Class<Number>) PRIMITIVE_TYPE_MAP.get(method.getReturnType()),
-                    method
+                (Class<Number>) PRIMITIVE_TYPE_MAP.get(method.getReturnType()),
+                method
             );
     }
 

@@ -35,10 +35,13 @@ import com.nur1popcorn.irrlicht.modules.ModuleManager;
 import com.nur1popcorn.irrlicht.utils.ASMUtils;
 import com.nur1popcorn.irrlicht.utils.LoggerFactory;
 import com.nur1popcorn.irrlicht.management.TimeHelper;
+import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
+import org.objectweb.asm.util.CheckClassAdapter;
 
+import java.io.*;
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
@@ -151,7 +154,7 @@ public class Hooker
             }
             final AbstractInsnNode instructions[] = methodNode.instructions.toArray();
             final int[] opcodes = instructions.length <= 51 ?
-                    new int[] { Opcodes.FDIV } :
+                    new int[] { Opcodes.L2F, Opcodes.ALOAD, Opcodes.GETFIELD } :
                     new int[] {
                         Opcodes.ALOAD,
                         Opcodes.DUP,
@@ -165,8 +168,9 @@ public class Hooker
                     final AbstractInsnNode abstractInsnNode = instructions[i + opcodes.length - 1];
                     if(instructions.length <= 51)
                     {
-                        injection.add(new InsnNode(Opcodes.FMUL));
+                        methodNode.instructions.remove(abstractInsnNode.getPrevious());
                         methodNode.instructions.insert(abstractInsnNode, injection);
+                        methodNode.instructions.remove(abstractInsnNode);
                     }
                     else
                     {
@@ -177,6 +181,7 @@ public class Hooker
                     }
                     break;
                 }
+            LOGGER.log(Level.INFO, ASMUtils.formatInstructions(methodNode.instructions));
         });
         return hooker;
     }
@@ -361,6 +366,14 @@ public class Hooker
                     }
                 }
                 final Class mappedClass = mapper.getMappedClass(clazz);
+                final File file = new File("C:\\Users\\user\\Desktop\\fuckingbull.class");
+                try {
+                    FileOutputStream fileOutputStream = new FileOutputStream(file);
+                    fileOutputStream.write(ASMUtils.getBytes(ASMUtils.getClassNode(mappedClass)), 0, ASMUtils.getBytes(ASMUtils.getClassNode(mappedClass)).length);
+                    fileOutputStream.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 return new ClassDefinition(mappedClass, ASMUtils.getBytes(ASMUtils.getClassNode(mappedClass)));
             }).toArray(ClassDefinition[]::new));
         }

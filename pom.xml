@@ -8,6 +8,10 @@
     <artifactId>irrlicht</artifactId>
     <version>1.1.1-alpha</version>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>jdk.tools</groupId>
@@ -55,9 +59,7 @@
     </dependencies>
 
     <build>
-        <defaultGoal>clean install</defaultGoal>
         <finalName>Irrlicht</finalName>
-        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 
         <resources>
             <resource>
@@ -122,6 +124,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
                 <configuration>
                     <archive>
                         <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
