@@ -134,7 +134,7 @@ public class Hooker
     public static Hooker createHooker()
     {
         final Hooker hooker = new Hooker();
-        //hooker.register(Mapper.DisplayWrapper.class); //hook #swapBuffers method.
+        hooker.register(Mapper.DisplayWrapper.class); //hook #swapBuffers method.
         hooker.register(PlayerSp.class);
         hooker.register(GuiIngame.class);
         hooker.register(NetworkManager.class);
