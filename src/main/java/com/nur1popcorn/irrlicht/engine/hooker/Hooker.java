@@ -140,7 +140,6 @@ public class Hooker
         hooker.register(NetworkManager.class);
         hooker.register(Timer.class);
         hooker.register(ASMUtils.getMethod(Timer.class, "updateTimer()V"), (HookingHandler) methodNode -> {
-
             final InsnList injection = new InsnList();
             {
                 final String irrlicht = Type.getInternalName(Irrlicht.class);
@@ -181,7 +180,6 @@ public class Hooker
                     }
                     break;
                 }
-            LOGGER.log(Level.INFO, ASMUtils.formatInstructions(methodNode.instructions));
         });
         return hooker;
     }
@@ -366,14 +364,6 @@ public class Hooker
                     }
                 }
                 final Class mappedClass = mapper.getMappedClass(clazz);
-                final File file = new File("C:\\Users\\user\\Desktop\\fuckingbull.class");
-                try {
-                    FileOutputStream fileOutputStream = new FileOutputStream(file);
-                    fileOutputStream.write(ASMUtils.getBytes(ASMUtils.getClassNode(mappedClass)), 0, ASMUtils.getBytes(ASMUtils.getClassNode(mappedClass)).length);
-                    fileOutputStream.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 return new ClassDefinition(mappedClass, ASMUtils.getBytes(ASMUtils.getClassNode(mappedClass)));
             }).toArray(ClassDefinition[]::new));
         }
