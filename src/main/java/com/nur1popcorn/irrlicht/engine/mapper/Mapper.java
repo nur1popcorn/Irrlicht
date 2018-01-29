@@ -26,15 +26,15 @@ import com.nur1popcorn.irrlicht.engine.wrappers.Start;
 import com.nur1popcorn.irrlicht.engine.wrappers.Wrapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.Minecraft;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.entity.ClientPlayer;
+import com.nur1popcorn.irrlicht.engine.wrappers.client.entity.PlayerMpOther;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.entity.PlayerSp;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.gui.GuiIngame;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.gui.GuiScreen;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.minecraft.Timer;
-import com.nur1popcorn.irrlicht.engine.wrappers.client.network.INetHandlerClient;
-import com.nur1popcorn.irrlicht.engine.wrappers.client.network.NetHandlerClient;
-import com.nur1popcorn.irrlicht.engine.wrappers.client.network.NetworkManager;
-import com.nur1popcorn.irrlicht.engine.wrappers.client.network.Packet;
+import com.nur1popcorn.irrlicht.engine.wrappers.client.network.*;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.settings.GameSettings;
+import com.nur1popcorn.irrlicht.engine.wrappers.world.World;
+import com.nur1popcorn.irrlicht.engine.wrappers.world.WorldClient;
 import com.nur1popcorn.irrlicht.engine.wrappers.entity.Entity;
 import com.nur1popcorn.irrlicht.engine.wrappers.entity.EntityLivingBase;
 import com.nur1popcorn.irrlicht.engine.wrappers.entity.EntityPlayer;
@@ -282,6 +282,11 @@ public class Mapper
         mapper.register(PlayerAbilities.class);
         mapper.register(EntityLivingBase.class);
         mapper.register(Entity.class);
+        mapper.register(WorldClient.class);
+        mapper.register(World.class);
+        mapper.register(PlayerMpOther.class, m -> Class.forName(((TypeInsnNode)ASMUtils.getLastInstruction(
+                ASMUtils.getMethodNode(m.getMappedMethod(ASMUtils.getMethod(World.class, "updateEntities()V"))).instructions,
+                Opcodes.INSTANCEOF)).desc.replace("/", ".")));
         mapper.register(AxisAlignedBB.class);
         mapper.register(Timer.class);
         mapper.register(GuiScreen.class);
@@ -316,6 +321,8 @@ public class Mapper
         mapper.register(NetHandlerClient.class);
         mapper.register(INetHandlerClient.class, m -> m.getMappedClass(NetHandlerClient.class).getInterfaces()[0]);
         //mapper.register(S12Velocity.class);
+        mapper.register(NetHandlerServer.class);
+        mapper.register(INetHandlerServer.class, m -> m.getMappedClass(NetHandlerServer.class).getInterfaces()[0]);
         mapper.register(NetworkManager.class);
         mapper.register(Packet.class, m -> m.getMappedClass(INetHandlerClient.class).getDeclaredMethods()[0].getParameterTypes()[0].getInterfaces()[0]);
         mapper.register(GameSettings.class);

@@ -78,9 +78,9 @@ public interface GuiScreen extends Wrapper
     public void onClose();
 
     @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIRST_MATCH | Mapper.OPCODES,
-            opcodes = {
-                    Opcodes.ICONST_1,
-                    Opcodes.IRETURN
+                     opcodes = {
+                        Opcodes.ICONST_1,
+                        Opcodes.IRETURN
             })
     public boolean shouldPauseGame();
 }
