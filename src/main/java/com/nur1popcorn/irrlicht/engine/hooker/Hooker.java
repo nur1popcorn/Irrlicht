@@ -140,6 +140,7 @@ public class Hooker
         hooker.register(NetworkManager.class);
         hooker.register(Timer.class);
         hooker.register(ASMUtils.getMethod(Timer.class, "updateTimer()V"), (HookingHandler) methodNode -> {
+
             final InsnList injection = new InsnList();
             {
                 final String irrlicht = Type.getInternalName(Irrlicht.class);
@@ -154,13 +155,13 @@ public class Hooker
             }
             final AbstractInsnNode instructions[] = methodNode.instructions.toArray();
             final int[] opcodes = instructions.length <= 51 ?
-                    new int[] { Opcodes.L2F, Opcodes.ALOAD, Opcodes.GETFIELD } :
+                    new int[] { Opcodes.FDIV } :
                     new int[] {
-                        Opcodes.ALOAD,
-                        Opcodes.DUP,
-                        Opcodes.GETFIELD,
-                        Opcodes.F2D,
-                        Opcodes.DLOAD
+                            Opcodes.ALOAD,
+                            Opcodes.DUP,
+                            Opcodes.GETFIELD,
+                            Opcodes.F2D,
+                            Opcodes.DLOAD
                     };
             for(int i = 0; i < instructions.length; i++)
                 if(ASMUtils.checkInstructionMatch(methodNode.instructions, opcodes, i))
@@ -168,9 +169,8 @@ public class Hooker
                     final AbstractInsnNode abstractInsnNode = instructions[i + opcodes.length - 1];
                     if(instructions.length <= 51)
                     {
-                        methodNode.instructions.remove(abstractInsnNode.getPrevious());
+                        injection.add(new InsnNode(Opcodes.FMUL));
                         methodNode.instructions.insert(abstractInsnNode, injection);
-                        methodNode.instructions.remove(abstractInsnNode);
                     }
                     else
                     {
