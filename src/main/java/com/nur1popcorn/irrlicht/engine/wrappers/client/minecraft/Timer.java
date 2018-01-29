@@ -42,11 +42,11 @@ import org.objectweb.asm.Opcodes;
 public interface Timer extends Wrapper
 {
     @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.CONSTRUCTOR | Mapper.FIRST_MATCH | Mapper.OPCODES,
-            opcodes = {
-                    Opcodes.ALOAD,
-                    Opcodes.INVOKESTATIC,
-                    Opcodes.PUTFIELD
-            })
+                     opcodes = {
+                        Opcodes.ALOAD,
+                        Opcodes.INVOKESTATIC,
+                        Opcodes.PUTFIELD
+                     })
     public void construct(float ticksPerSecond);
 
     @HookingMethod(value = Event.class, flags = Hooker.CUSTOM)

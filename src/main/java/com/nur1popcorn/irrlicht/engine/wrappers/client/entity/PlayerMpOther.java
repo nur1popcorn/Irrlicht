@@ -19,12 +19,19 @@
 
 package com.nur1popcorn.irrlicht.engine.wrappers.client.entity;
 
+import com.nur1popcorn.irrlicht.engine.mapper.DiscoveryMethod;
+import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
+import com.nur1popcorn.irrlicht.engine.wrappers.client.network.NetHandlerServer;
+
 /**
  * The {@link PlayerMpOther} represents other players on the server.
  *
  * @author nur1popcorn
  * @since 1.1.0-alpha
  */
+@DiscoveryMethod(checks = Mapper.CUSTOM)
 public interface PlayerMpOther extends ClientPlayer
 {
+    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
+    public NetHandlerServer getConnection();
 }

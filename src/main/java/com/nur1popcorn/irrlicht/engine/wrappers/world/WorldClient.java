@@ -17,25 +17,25 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.engine.wrappers.client.network;
+package com.nur1popcorn.irrlicht.engine.wrappers.world;
 
 import com.nur1popcorn.irrlicht.engine.mapper.DiscoveryMethod;
 import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
-import com.nur1popcorn.irrlicht.engine.wrappers.client.entity.PlayerMpOther;
+import com.nur1popcorn.irrlicht.engine.wrappers.client.Minecraft;
 
 /**
- * The {@link NetHandlerServer} handle incoming packets.
+ * The {@link WorldClient} is the multiplayer {@link World}'s instance.
  *
- * @see INetHandlerServer
+ * @see World
+ * @see Minecraft
  *
- * @author nur1popcorn
- * @since 1.0.0-alpha
+ * @author Siphedrion
+ * @since 1.1.1-alpha
  */
 @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.STRING_CONST,
-                 declaring = PlayerMpOther.class,
-                 constants = { "keepAlive" })
-public interface NetHandlerServer extends INetHandlerServer
+                 declaring = Minecraft.class,
+                 constants = { "MpServer" })
+public interface WorldClient extends World
 {
-    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
-    public NetworkManager getNetworkManager();
+
 }

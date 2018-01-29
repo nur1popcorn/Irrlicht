@@ -27,6 +27,7 @@ import com.nur1popcorn.irrlicht.engine.wrappers.client.gui.GuiIngame;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.gui.GuiScreen;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.minecraft.Timer;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.settings.GameSettings;
+import com.nur1popcorn.irrlicht.engine.wrappers.world.WorldClient;
 
 import java.lang.reflect.Modifier;
 
@@ -67,6 +68,9 @@ public interface Minecraft extends Wrapper
 
     @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
     public GuiScreen getGuiScreen();
+
+    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
+    public WorldClient getWorld();
 
     @DiscoveryMethod(modifiers = Modifier.PUBLIC | Modifier.STATIC)
     public Minecraft getMinecraft();
