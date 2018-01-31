@@ -49,6 +49,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -225,6 +226,7 @@ public class Mapper
     private Map<Class<? extends Wrapper>, Class> mappedClasses = new HashMap<>();
     private Map<Method, Method> mappedMethods = new HashMap<>();
     private Map<Method, Field> mappedFields = new HashMap<>();
+    private Map<Method, Constructor> mappedConstructors = new HashMap<>();
     private boolean success;
 
     //prevent construction :/
@@ -572,10 +574,9 @@ public class Mapper
                            discoveryMethod.declaring() != Wrapper.class)
                             LOGGER.log(Level.WARNING, "The method provided has a invalid declaring tag attached to it: " + wrapper.getName() + "#" + method.getName());
 
-                        //if the method is a constructor remove it.
-                        if((flags & CONSTRUCTOR) != 0 ||
-                           getMappedMethod(method) != null ||
-                           getMappedField(method) != null)
+                        if(getMappedMethod(method) != null ||
+                           getMappedField(method) != null ||
+                           getMappedConstructor(method)!= null)
                         {
                             methodIterator.remove();
                             continue;
@@ -583,7 +584,48 @@ public class Mapper
 
                         //perform a default check.
                         if((flags & DEFAULT) != 0)
-                            if((flags & FIELD) != 0) inner: {
+                            if((flags & CONSTRUCTOR) != 0) inner: {
+                                //attempt to find the constructor using its mods/parameters.
+                                Constructor result = null;
+
+                                //get the methods parameters.
+                                final List<Class> parameters = Stream.of(method.getParameterTypes())
+                                        .map(this::convertToMappedClass)
+                                        .collect(Collectors.toList());
+
+                                for (Constructor constructor : getMappedClass(wrapper).getDeclaredConstructors())
+                                    //check method modifiers.
+                                    if((discoveryMethod == null ||
+                                        discoveryMethod.modifiers() == 0 ||
+                                        constructor.getModifiers() == discoveryMethod.modifiers()) &&
+                                            //check constructor return-types.
+                                            (convertToMappedClass(method.getReturnType()) == constructor.getDeclaringClass() &&
+                                            //check constructor parameters.
+                                            parameters.equals(Arrays.asList(constructor.getParameterTypes()))) &&
+                                            //check exceptions.
+                                            (method.getExceptionTypes().length != 0 ||
+                                             Arrays.asList(method.getExceptionTypes()).equals(Arrays.asList(constructor.getExceptionTypes()))) &&
+                                            //check opcodes.
+                                            ((flags & OPCODES) == 0 ||
+                                            (discoveryMethod.opcodes().length != 0 &&
+                                             ASMUtils.hasInstructionMatch(ASMUtils.getMethodNode(constructor).instructions, discoveryMethod.opcodes()))))
+                                    {
+                                        //check if method is unique.
+                                        if((flags & LAST_MATCH) == 0 &&
+                                                result != null)
+                                            break inner;
+                                        result = constructor;
+                                        if((flags & FIRST_MATCH) != 0)
+                                            break;
+                                    }
+
+                                if(result != null)
+                                {
+                                    mappedConstructors.put(method, result);
+                                    continue outer;
+                                }
+                            }
+                            else if((flags & FIELD) != 0) inner: {
                                 //attempt to find the field.
                                 List<Method> structure = null;
                                 //check if field is part of a structure i.e. fields whose order is very unlikely to change.
@@ -761,7 +803,9 @@ public class Mapper
                         for(Method  method : wrapper.getDeclaredMethods())
                             LOGGER.log(Level.INFO, "  " + (mappedMethods.get(method) != null ?
                                     "Discovered method " + method.getName() + ":" + mappedMethods.get(method).getName() :
-                                    "Discovered field " + method.getName() + ":" + mappedFields.get(method)));
+                                    (mappedFields.get(method) != null ?
+                                    "Discovered field " + method.getName() + ":" + mappedFields.get(method) :
+                                    "Discovered constructor " + method.getName() + ":" + mappedConstructors.get(method))));
                         wrapperIterator.remove();
                         continue outer;
                     }
@@ -824,6 +868,18 @@ public class Mapper
     public Field getMappedField(Method method)
     {
         return mappedFields.get(method);
+    }
+
+    /**
+     * @param method the method for which the mapped constructor should be returned.
+     *
+     * @see #generate()
+     *
+     * @return the constructor mapped to the method.
+     */
+    public Constructor getMappedConstructor(Method method)
+    {
+        return mappedConstructors.get(method);
     }
 
     /**

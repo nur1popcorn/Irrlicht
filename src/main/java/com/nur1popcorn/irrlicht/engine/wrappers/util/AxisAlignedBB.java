@@ -38,7 +38,7 @@ import com.nur1popcorn.irrlicht.engine.wrappers.entity.Entity;
 public interface AxisAlignedBB extends Wrapper
 {
     @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.CONSTRUCTOR)
-    public void construct(double x, double y, double z, double xOther, double yOther, double zOther);
+    public AxisAlignedBB construct(double x, double y, double z, double xOther, double yOther, double zOther);
 
     @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD | Mapper.STRUCTURE_START)
     public double getMinX();

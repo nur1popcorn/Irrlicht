@@ -19,7 +19,6 @@
 
 package com.nur1popcorn.irrlicht.engine.hooker;
 
-import com.nur1popcorn.irrlicht.Irrlicht;
 import com.nur1popcorn.irrlicht.engine.events.Event;
 import com.nur1popcorn.irrlicht.engine.events.EventManager;
 import com.nur1popcorn.irrlicht.engine.events.ICancellableEvent;
@@ -30,18 +29,13 @@ import com.nur1popcorn.irrlicht.engine.wrappers.client.entity.PlayerSp;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.gui.GuiIngame;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.minecraft.Timer;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.network.NetworkManager;
-import com.nur1popcorn.irrlicht.modules.Module;
-import com.nur1popcorn.irrlicht.modules.ModuleManager;
 import com.nur1popcorn.irrlicht.utils.ASMUtils;
 import com.nur1popcorn.irrlicht.utils.LoggerFactory;
 import com.nur1popcorn.irrlicht.management.TimeHelper;
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
-import org.objectweb.asm.util.CheckClassAdapter;
 
-import java.io.*;
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
@@ -139,48 +133,6 @@ public class Hooker
         hooker.register(GuiIngame.class);
         hooker.register(NetworkManager.class);
         hooker.register(Timer.class);
-        hooker.register(ASMUtils.getMethod(Timer.class, "updateTimer()V"), (HookingHandler) methodNode -> {
-            final InsnList injection = new InsnList();
-            {
-                final String irrlicht = Type.getInternalName(Irrlicht.class);
-                injection.add(new MethodInsnNode(Opcodes.INVOKESTATIC, irrlicht, "getIrrlicht", "()L" + irrlicht + ";", false));
-                final String moduleManager = Type.getInternalName(ModuleManager.class);
-                injection.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, irrlicht, "getModuleManager", "()L" + moduleManager + ";", false));
-                final String timer = Type.getInternalName(com.nur1popcorn.irrlicht.modules.impl.misc.Timer.class);
-                injection.add(new LdcInsnNode(Type.getType("L" + timer + ";")));
-                injection.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, moduleManager, "getModule", "(Ljava/lang/Class;)L" + Type.getInternalName(Module.class) + ";", false));
-                injection.add(new TypeInsnNode(Opcodes.CHECKCAST, timer));
-                injection.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, timer, "getTimerSpeed", "()F", false));
-            }
-            final AbstractInsnNode instructions[] = methodNode.instructions.toArray();
-            final int[] opcodes = instructions.length <= 51 ?
-                    new int[] { Opcodes.FDIV } :
-                    new int[] {
-                            Opcodes.ALOAD,
-                            Opcodes.DUP,
-                            Opcodes.GETFIELD,
-                            Opcodes.F2D,
-                            Opcodes.DLOAD
-                    };
-            for(int i = 0; i < instructions.length; i++)
-                if(ASMUtils.checkInstructionMatch(methodNode.instructions, opcodes, i))
-                {
-                    final AbstractInsnNode abstractInsnNode = instructions[i + opcodes.length - 1];
-                    if(instructions.length <= 51)
-                    {
-                        injection.add(new InsnNode(Opcodes.FMUL));
-                        methodNode.instructions.insert(abstractInsnNode, injection);
-                    }
-                    else
-                    {
-                        final AbstractInsnNode next = abstractInsnNode.getNext();
-                        methodNode.instructions.remove(next.getNext());
-                        methodNode.instructions.insert(next, injection);
-                        methodNode.instructions.remove(next);
-                    }
-                    break;
-                }
-        });
         return hooker;
     }
 
@@ -257,7 +209,9 @@ public class Hooker
                     if(hookingMethod != null)
                     {
                         final int flags = hookingMethod.flags();
-                        final MethodNode methodNode = ASMUtils.getMethodNode(mapper.getMappedMethod(method));
+                        final MethodNode methodNode = mapper.getMappedMethod(method) != null ?
+                                ASMUtils.getMethodNode(mapper.getMappedMethod(method)) :
+                                ASMUtils.getMethodNode(mapper.getMappedConstructor(method));
                         assert methodNode != null;
                         if((flags & DEFAULT) != 0)
                         {
@@ -337,8 +291,11 @@ public class Hooker
                                         injection.add(new IntInsnNode(Opcodes.BIPUSH, i));
                                         injection.add(new InsnNode(Opcodes.AALOAD));
                                         final String desc = ((LocalVariableNode) methodNode.localVariables.get(overwrite[i])).desc;
-                                        injection.add(new TypeInsnNode(Opcodes.CHECKCAST, desc.startsWith("[") ? desc : new StringBuilder(desc).deleteCharAt(desc.length() - 1).deleteCharAt(0).toString()));
-                                        injection.add(new VarInsnNode(Opcodes.ASTORE, overwrite[i]));
+                                        final Type type = Type.getType(desc);
+                                        final int opcode = type.getOpcode(Opcodes.ISTORE);
+                                        if(opcode == Opcodes.ASTORE)
+                                            injection.add(new TypeInsnNode(Opcodes.CHECKCAST, type.getInternalName()));
+                                        injection.add(new VarInsnNode(opcode, overwrite[i]));
                                     }
                                 }
 

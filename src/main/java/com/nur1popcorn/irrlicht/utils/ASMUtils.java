@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -154,6 +155,19 @@ public class ASMUtils
     {
         for(MethodNode methodNode : (List<MethodNode>) ASMUtils.getClassNode(method.getDeclaringClass()).methods)
             if(methodNode.name.equals(method.getName()) && methodNode.desc.equals(Type.getMethodDescriptor(method)))
+                return methodNode;
+        return null;
+    }
+
+    /**
+     * @param constructor the constructor for which the {@link MethodNode} should be returned.
+     *
+     * @return the {@link MethodNode} for the provided constructor.
+     */
+    public static MethodNode getMethodNode(Constructor constructor)
+    {
+        for(MethodNode methodNode : (List<MethodNode>) ASMUtils.getClassNode(constructor.getDeclaringClass()).methods)
+            if(methodNode.name.equals("<init>") && methodNode.desc.equals(Type.getConstructorDescriptor(constructor)))
                 return methodNode;
         return null;
     }
