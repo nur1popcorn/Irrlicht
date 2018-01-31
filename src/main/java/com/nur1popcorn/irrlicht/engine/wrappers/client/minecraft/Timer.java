@@ -19,9 +19,9 @@
 
 package com.nur1popcorn.irrlicht.engine.wrappers.client.minecraft;
 
-import com.nur1popcorn.irrlicht.engine.events.Event;
 import com.nur1popcorn.irrlicht.engine.hooker.Hooker;
 import com.nur1popcorn.irrlicht.engine.hooker.HookingMethod;
+import com.nur1popcorn.irrlicht.engine.hooker.impl.TimerEvent;
 import com.nur1popcorn.irrlicht.engine.mapper.DiscoveryMethod;
 import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.Wrapper;
@@ -47,8 +47,14 @@ public interface Timer extends Wrapper
                         Opcodes.INVOKESTATIC,
                         Opcodes.PUTFIELD
                      })
-    public void construct(float ticksPerSecond);
-
-    @HookingMethod(value = Event.class, flags = Hooker.CUSTOM)
-    public void updateTimer();
+    @HookingMethod(value = TimerEvent.class,
+                   flags = Hooker.DEFAULT | Hooker.BEFORE,
+                   indices = {
+                   /* indices: 0 -> this
+                    *          1 -> tps */
+                       1
+                   }, overwrite = {
+                       1
+                   })
+    public Timer construct(float ticksPerSecond);
 }

@@ -21,10 +21,7 @@ package com.nur1popcorn.irrlicht.engine.mapper;
 
 import com.nur1popcorn.irrlicht.engine.wrappers.Wrapper;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.util.stream.Stream;
 
 /**
@@ -59,7 +56,7 @@ public class WrapperDelegationHandler implements InvocationHandler
      */
     public static <T extends Wrapper> T createWrapperProxy(Class<T> wrapper, Object handle)
     {
-        return (T) Proxy.newProxyInstance(WrapperDelegationHandler.class.getClassLoader(), new Class[] { wrapper }, new WrapperDelegationHandler(handle));
+        return wrapper.cast(Proxy.newProxyInstance(WrapperDelegationHandler.class.getClassLoader(), new Class[] { wrapper }, new WrapperDelegationHandler(handle)));
     }
 
     @Override
@@ -93,6 +90,13 @@ public class WrapperDelegationHandler implements InvocationHandler
                 return null;
             }
             return convertToType(field.get(handle), method.getReturnType());
+        }
+
+        final Constructor constructor = mapper.getMappedConstructor(method);
+        if(constructor != null)
+        {
+            constructor.setAccessible(true);
+            return convertToType(constructor.newInstance(argsHandles), method.getReturnType());
         }
 
         return method.invoke(handle, args);

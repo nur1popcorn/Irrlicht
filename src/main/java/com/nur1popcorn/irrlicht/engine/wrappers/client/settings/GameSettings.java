@@ -39,10 +39,10 @@ import java.io.File;
 public interface GameSettings extends Wrapper
 {
     @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.CONSTRUCTOR)
-    public void construct(Minecraft minecraft, File file);
+    public GameSettings construct(Minecraft minecraft, File file);
 
     @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.CONSTRUCTOR)
-    public void construct();
+    public GameSettings construct();
 
     @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD | Mapper.STRUCTURE_START)
     public boolean isSmoothCameraEnabled();

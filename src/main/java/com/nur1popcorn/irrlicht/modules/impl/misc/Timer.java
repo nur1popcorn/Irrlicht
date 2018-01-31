@@ -19,6 +19,8 @@
 
 package com.nur1popcorn.irrlicht.modules.impl.misc;
 
+import com.nur1popcorn.irrlicht.engine.events.EventTarget;
+import com.nur1popcorn.irrlicht.engine.hooker.impl.TimerEvent;
 import com.nur1popcorn.irrlicht.engine.hooker.impl.UpdateEvent;
 import com.nur1popcorn.irrlicht.management.values.SliderValue;
 import com.nur1popcorn.irrlicht.management.values.ValueTarget;
@@ -43,10 +45,10 @@ public class Timer extends Module
     @ValueTarget
     private SliderValue<Float> timerSpeed = new SliderValue<>(this, "Speed", 1f, 0.1f, 10f, 0.1f);
 
-    public float getTimerSpeed()
+    @EventTarget
+    public void onTimerEvent(TimerEvent event)
     {
-        return isToggled() ?
-                timerSpeed.value :
-                1.0f;
+        System.out.println("test");
+        System.out.println(event.timerSpeed);
     }
 }
