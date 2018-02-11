@@ -62,7 +62,7 @@ public @interface DiscoveryMethod
      *
      * @return The kind of modifiers attached to the method/field
      */
-    public int modifiers() default 0;
+    public int modifiers() default -1;
 
     /**
      * The class declaring the class by extending it or declaring it as a field.

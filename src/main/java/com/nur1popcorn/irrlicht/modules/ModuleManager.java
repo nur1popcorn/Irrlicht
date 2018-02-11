@@ -21,7 +21,7 @@ package com.nur1popcorn.irrlicht.modules;
 
 import com.nur1popcorn.irrlicht.modules.impl.combat.AutoClicker;
 import com.nur1popcorn.irrlicht.modules.impl.combat.Velocity;
-import com.nur1popcorn.irrlicht.modules.impl.misc.Timer;
+import com.nur1popcorn.irrlicht.modules.impl.misc.Delorean;
 import com.nur1popcorn.irrlicht.modules.impl.movement.Fly;
 import com.nur1popcorn.irrlicht.modules.impl.movement.NoFall;
 import com.nur1popcorn.irrlicht.modules.impl.movement.Speed;
@@ -61,7 +61,7 @@ public class ModuleManager
         moduleManager.register(new AutoClicker());
         moduleManager.register(new Velocity());
         //misc
-        moduleManager.register(new Timer());
+        moduleManager.register(new Delorean());
         //movement
         moduleManager.register(new Fly());
         moduleManager.register(new NoFall());
@@ -107,7 +107,7 @@ public class ModuleManager
     {
         for(Module module : modules)
             if(module.getClass() == clazz)
-                return (T) module;
+                return clazz.cast(module);
         return null;
     }
 

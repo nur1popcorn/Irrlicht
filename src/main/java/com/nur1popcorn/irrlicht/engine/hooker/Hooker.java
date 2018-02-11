@@ -27,8 +27,8 @@ import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.Wrapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.entity.PlayerSp;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.gui.GuiIngame;
-import com.nur1popcorn.irrlicht.engine.wrappers.client.minecraft.Timer;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.network.NetworkManager;
+import com.nur1popcorn.irrlicht.engine.wrappers.client.renderer.EntityRenderer;
 import com.nur1popcorn.irrlicht.utils.ASMUtils;
 import com.nur1popcorn.irrlicht.utils.LoggerFactory;
 import com.nur1popcorn.irrlicht.management.TimeHelper;
@@ -132,7 +132,7 @@ public class Hooker
         hooker.register(PlayerSp.class);
         hooker.register(GuiIngame.class);
         hooker.register(NetworkManager.class);
-        hooker.register(Timer.class);
+        hooker.register(EntityRenderer.class);
         return hooker;
     }
 
@@ -307,8 +307,12 @@ public class Hooker
                                 //find set of opcodes and inject before or after them.
                                 ASMUtils.insert(methodNode.instructions, hookingMethod.opcodes(), injection, (flags & BEFORE) != 0);
                             else if((flags & BEFORE) != 0)
-                                //insert injection at method start.
-                                methodNode.instructions.insert(injection);
+                                if(methodNode.name.equals("<init>"))
+                                    //insert injection after invokespecial java/lang/Object <init>()V instruction.
+                                    methodNode.instructions.insert(ASMUtils.getFirst(methodNode.instructions, Opcodes.INVOKESPECIAL), injection);
+                                else
+                                    //insert injection at method start.
+                                    methodNode.instructions.insert(injection);
                             else if((flags & AFTER) != 0)
                                 //insert injection at method end.
                                 methodNode.instructions.insertBefore(ASMUtils.getLast(methodNode.instructions, Opcodes.RETURN), injection);

@@ -19,9 +19,11 @@
 
 package com.nur1popcorn.irrlicht.modules.impl.misc;
 
+import com.nur1popcorn.irrlicht.Irrlicht;
 import com.nur1popcorn.irrlicht.engine.events.EventTarget;
-import com.nur1popcorn.irrlicht.engine.hooker.impl.TimerEvent;
 import com.nur1popcorn.irrlicht.engine.hooker.impl.UpdateEvent;
+import com.nur1popcorn.irrlicht.engine.mapper.WrapperDelegationHandler;
+import com.nur1popcorn.irrlicht.engine.wrappers.client.minecraft.Timer;
 import com.nur1popcorn.irrlicht.management.values.SliderValue;
 import com.nur1popcorn.irrlicht.management.values.ValueTarget;
 import com.nur1popcorn.irrlicht.modules.Category;
@@ -29,7 +31,7 @@ import com.nur1popcorn.irrlicht.modules.Module;
 import com.nur1popcorn.irrlicht.modules.ModuleInfo;
 
 /**
- * The {@link Timer} is a cheat that accelerates the game's number of updates effectively
+ * The {@link Delorean} is a cheat that accelerates the game's number of updates effectively
  * incrementing the number of packets being sent and the number of movements being made.
  *
  * @see Module
@@ -38,17 +40,28 @@ import com.nur1popcorn.irrlicht.modules.ModuleInfo;
  * @author nur1popcorn
  * @since 1.0.0-alpha
  */
-@ModuleInfo(name = "Timer",
+@ModuleInfo(name = "Delorean",
             category = Category.MISC)
-public class Timer extends Module
+public class Delorean extends Module
 {
     @ValueTarget
     private SliderValue<Float> timerSpeed = new SliderValue<>(this, "Speed", 1f, 0.1f, 10f, 0.1f);
 
-    @EventTarget
-    public void onTimerEvent(TimerEvent event)
+    private final Timer timer = WrapperDelegationHandler.createWrapperProxy(Timer.class, null);
+
+    @Override
+    public void onDisable()
     {
-        System.out.println("test");
-        System.out.println(event.timerSpeed);
+        super.onDisable();
+
+        Irrlicht.getMinecraft()
+                .setTimer(timer.construct(20.0f));
+    }
+
+    @EventTarget
+    public void onUpdate(UpdateEvent event)
+    {
+        Irrlicht.getMinecraft()
+                .setTimer(timer.construct(20.0f * timerSpeed.value));
     }
 }

@@ -22,12 +22,17 @@ package com.nur1popcorn.irrlicht;
 import com.nur1popcorn.irrlicht.engine.exceptions.MappingException;
 import com.nur1popcorn.irrlicht.engine.hooker.Hooker;
 import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
+import com.nur1popcorn.irrlicht.engine.wrappers.Wrapper;
 import com.nur1popcorn.irrlicht.management.GameConfig;
+import com.nur1popcorn.irrlicht.utils.LoggerFactory;
 
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The {@link Agent} is the agent's entry point.
@@ -41,6 +46,8 @@ import java.util.Map;
  */
 public class Agent
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Agent.class);
+
     public static void premain(String args, Instrumentation instrumentation)
     {
         agentmain(args, instrumentation);
@@ -71,9 +78,22 @@ public class Agent
             Hooker.createHooker()
                   .hook(instrumentation);
         }
-        catch (MappingException | ClassNotFoundException e)
+        catch (MappingException e)
         {
-            e.printStackTrace();
+            // TODO: Better error handling
+            LOGGER.log(Level.SEVERE, "");
+            for(Class<? extends Wrapper> wrapper : e.getWrappers())
+            {
+                LOGGER.log(Level.SEVERE, wrapper.toString());
+                for(Method method : wrapper.getDeclaredMethods())
+                    if (Mapper.getInstance().getMappedMethod(method) == null)
+                        LOGGER.log(Level.SEVERE, method.toString());
+            }
+            LOGGER.log(Level.SEVERE, "", e);
+        }
+        catch (ClassNotFoundException e)
+        {
+            LOGGER.log(Level.SEVERE, "Got an exception.", e);
         }
     }
 }

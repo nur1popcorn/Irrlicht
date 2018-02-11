@@ -26,6 +26,7 @@ import com.nur1popcorn.irrlicht.engine.wrappers.client.entity.PlayerSp;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.gui.GuiIngame;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.gui.GuiScreen;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.minecraft.Timer;
+import com.nur1popcorn.irrlicht.engine.wrappers.client.renderer.EntityRenderer;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.settings.GameSettings;
 import com.nur1popcorn.irrlicht.engine.wrappers.world.WorldClient;
 
@@ -55,6 +56,9 @@ public interface Minecraft extends Wrapper
     public Timer getTimer();
 
     @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
+    public Timer setTimer(Timer timer);
+
+    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
     public GameSettings getGameSettings();
 
     @DiscoveryMethod(checks = Mapper.CUSTOM | Mapper.FIELD)
@@ -71,6 +75,9 @@ public interface Minecraft extends Wrapper
 
     @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
     public WorldClient getWorld();
+
+    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
+    public EntityRenderer getEntityRenderer();
 
     @DiscoveryMethod(modifiers = Modifier.PUBLIC | Modifier.STATIC)
     public Minecraft getMinecraft();

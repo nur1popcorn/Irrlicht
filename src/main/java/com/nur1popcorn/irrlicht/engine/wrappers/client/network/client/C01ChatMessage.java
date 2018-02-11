@@ -33,9 +33,9 @@ import com.nur1popcorn.irrlicht.engine.wrappers.client.network.Packet;
  */
 public interface C01ChatMessage extends Packet
 {
-    @DiscoveryMethod(modifiers = Mapper.DEFAULT | Mapper.FIELD)
+    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
     public String getMessage();
 
-    @DiscoveryMethod(modifiers = Mapper.DEFAULT | Mapper.FIELD)
+    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIELD)
     public void setMessage(String message);
 }
