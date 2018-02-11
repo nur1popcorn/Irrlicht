@@ -17,8 +17,10 @@
  *
  */
 
-package com.nur1popcorn.irrlicht.engine.wrappers.client.minecraft;
+package com.nur1popcorn.irrlicht.engine.wrappers.client.renderer;
 
+import com.nur1popcorn.irrlicht.engine.hooker.HookingMethod;
+import com.nur1popcorn.irrlicht.engine.hooker.impl.Render3DEvent;
 import com.nur1popcorn.irrlicht.engine.mapper.DiscoveryMethod;
 import com.nur1popcorn.irrlicht.engine.mapper.Mapper;
 import com.nur1popcorn.irrlicht.engine.wrappers.Wrapper;
@@ -26,23 +28,27 @@ import com.nur1popcorn.irrlicht.engine.wrappers.client.Minecraft;
 import org.objectweb.asm.Opcodes;
 
 /**
- * The {@link Timer} class is used to handle the game's timings like updates per second
- * by incrementing this way one could speed up the game.
+ * The {@link EntityRenderer} class is used to do all player rendering
+ * events.
  *
  * @see Wrapper
  * @see Minecraft
  *
- * @author nur1popcorn
- * @since 1.0.0-alpha
+ * @author Siphedrion
+ * @since 1.1.1-alpha
  */
-@DiscoveryMethod(declaring = Minecraft.class)
-public interface Timer extends Wrapper
+@DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.STRING_CONST,
+                 declaring = Minecraft.class,
+                 constants = { "shaders/post/notch.json" })
+public interface EntityRenderer extends Wrapper
 {
-    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.CONSTRUCTOR | Mapper.FIRST_MATCH | Mapper.OPCODES,
+    @HookingMethod(value = Render3DEvent.class)
+    @DiscoveryMethod(checks = Mapper.DEFAULT | Mapper.FIRST_MATCH | Mapper.OPCODES,
                      opcodes = {
-                        Opcodes.ALOAD,
-                        Opcodes.INVOKESTATIC,
-                        Opcodes.PUTFIELD
+                          Opcodes.ALOAD,
+                          Opcodes.GETFIELD,
+                          Opcodes.FLOAD,
+                          Opcodes.INVOKEVIRTUAL
                      })
-    public Timer construct(float ticksPerSecond);
+    public void renderHand(float partialTicks, int pass);
 }

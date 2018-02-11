@@ -81,6 +81,6 @@ public interface GuiScreen extends Wrapper
                      opcodes = {
                         Opcodes.ICONST_1,
                         Opcodes.IRETURN
-            })
+                     })
     public boolean shouldPauseGame();
 }

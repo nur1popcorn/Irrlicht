@@ -31,5 +31,5 @@ import com.nur1popcorn.irrlicht.engine.events.Event;
  */
 public class Render3DEvent implements Event
 {
-    //TODO: hook
+
 }

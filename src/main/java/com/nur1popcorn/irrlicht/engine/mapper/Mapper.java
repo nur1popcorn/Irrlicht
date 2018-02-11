@@ -32,6 +32,7 @@ import com.nur1popcorn.irrlicht.engine.wrappers.client.gui.GuiIngame;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.gui.GuiScreen;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.minecraft.Timer;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.network.*;
+import com.nur1popcorn.irrlicht.engine.wrappers.client.renderer.EntityRenderer;
 import com.nur1popcorn.irrlicht.engine.wrappers.client.settings.GameSettings;
 import com.nur1popcorn.irrlicht.engine.wrappers.world.World;
 import com.nur1popcorn.irrlicht.engine.wrappers.world.WorldClient;
@@ -329,6 +330,7 @@ public class Mapper
         mapper.register(Packet.class, m -> m.getMappedClass(INetHandlerClient.class).getDeclaredMethods()[0].getParameterTypes()[0].getInterfaces()[0]);
         mapper.register(GameSettings.class);
         mapper.register(GuiIngame.class);
+        mapper.register(EntityRenderer.class);
         return mapper;
     }
 
@@ -596,7 +598,7 @@ public class Mapper
                                 for (Constructor constructor : getMappedClass(wrapper).getDeclaredConstructors())
                                     //check method modifiers.
                                     if((discoveryMethod == null ||
-                                        discoveryMethod.modifiers() == 0 ||
+                                        discoveryMethod.modifiers() == -1 ||
                                         constructor.getModifiers() == discoveryMethod.modifiers()) &&
                                             //check constructor return-types.
                                             (convertToMappedClass(method.getReturnType()) == constructor.getDeclaringClass() &&
@@ -653,7 +655,7 @@ public class Mapper
                                     final Field field = fields[i];
                                     //check field modifiers.
                                     if((discoveryMethod == null ||
-                                       discoveryMethod.modifiers() == 0 ||
+                                       discoveryMethod.modifiers() == -1 ||
                                        field.getModifiers() == discoveryMethod.modifiers()) &&
                                        //check field type.
                                        field.getType() == convertToMappedClass(method.getReturnType() != void.class ?
@@ -679,7 +681,7 @@ public class Mapper
                                                         structureMethod.getParameterTypes()[0] :
                                                         null) != fields[j].getType() ||
                                                         ((discovery = structureMethod.getDeclaredAnnotation(DiscoveryMethod.class)) != null &&
-                                                         discovery.modifiers() != 0 &&
+                                                         discovery.modifiers() != -1 &&
                                                          discovery.modifiers() != fields[j].getModifiers()))
                                                     continue loop;
                                             }
@@ -740,7 +742,7 @@ public class Mapper
                                 for(Method obfMethod : getMappedClass(wrapper).getDeclaredMethods())
                                     //check method modifiers.
                                     if((discoveryMethod == null ||
-                                        discoveryMethod.modifiers() == 0 ||
+                                        discoveryMethod.modifiers() == -1 ||
                                         obfMethod.getModifiers() == discoveryMethod.modifiers()) &&
                                             //check method return-types.
                                             (convertToMappedClass(method.getReturnType()) == obfMethod.getReturnType() &&

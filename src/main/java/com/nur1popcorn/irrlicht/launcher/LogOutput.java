@@ -27,9 +27,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.css.PseudoClass;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionMode;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.MessageFormat;
@@ -38,6 +43,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import java.util.stream.Collectors;
 
 /**
  * The {@link LogOutput} is used to display the clients logs.
@@ -75,6 +81,19 @@ public class LogOutput extends ListView<LogRecord> implements ILogOutput
 
         textFilter.addListener(observable -> setItems(new FilteredList<>(logRecords, logRecord -> textFilter.get().equals("") || logRecord.getMessage().toLowerCase().contains(textFilter.get().toLowerCase()))));
 
+        getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        final MenuItem selectAllMenuItem = new MenuItem("Select all");
+        selectAllMenuItem.setOnAction(event -> getSelectionModel().selectAll());
+        final MenuItem copyMenuItem = new MenuItem("Copy");
+        copyMenuItem.setOnAction(event ->
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
+                        new StringSelection(getSelectionModel().getSelectedItems().stream()
+                                .map(this::getDisplayText)
+                                .collect(Collectors.joining())),
+                        null));
+        setContextMenu(new ContextMenu(selectAllMenuItem, copyMenuItem));
+
         setCellFactory(param -> new ListCell<LogRecord>() {
             {
                 showTimestamp.addListener(observable -> updateItem(getItem(), isEmpty()));
@@ -89,23 +108,7 @@ public class LogOutput extends ListView<LogRecord> implements ILogOutput
                 if(record != null &&
                    !empty)
                 {
-                    final StringWriter stringWriter = new StringWriter();
-                    if (record.getThrown() != null)
-                    {
-                        PrintWriter printWriter = new PrintWriter(stringWriter);
-                        printWriter.println();
-                        record.getThrown().printStackTrace(printWriter);
-                        printWriter.close();
-                    }
-
-                    setText(new MessageFormat((showTimestamp.get() ? "[{0,date}, {0,time}] " : "") + (showCaller.get() ? "[{1}#{2}] " : "") +  "{3}: " + (showThread.get() ? "[T:{4}] " : "") + "{5}\n").format(new Object[] {
-                            new Date(record.getMillis()),
-                            record.getSourceClassName(),
-                            record.getSourceMethodName(),
-                            record.getLevel().getName(),
-                            record.getThreadID(),
-                            record.getMessage() + stringWriter.toString()
-                    }));
+                    setText(getDisplayText(record));
                     levelClasses.forEach(pseudoClass -> pseudoClassStateChanged(pseudoClass, false));
                     final PseudoClass pseudoClass = PseudoClass.getPseudoClass(record.getLevel().getName().toLowerCase());
                     pseudoClassStateChanged(pseudoClass, true);
@@ -114,6 +117,27 @@ public class LogOutput extends ListView<LogRecord> implements ILogOutput
                 else
                     setText(null);
             }
+        });
+    }
+
+    private String getDisplayText(LogRecord record)
+    {
+        final StringWriter stringWriter = new StringWriter();
+        if (record.getThrown() != null)
+        {
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+            printWriter.println();
+            record.getThrown().printStackTrace(printWriter);
+            printWriter.close();
+        }
+
+        return new MessageFormat((showTimestamp.get() ? "[{0,date}, {0,time}] " : "") + (showCaller.get() ? "[{1}#{2}] " : "") +  "{3}: " + (showThread.get() ? "[T:{4}] " : "") + "{5}\n").format(new Object[] {
+               new Date(record.getMillis()),
+               record.getSourceClassName(),
+               record.getSourceMethodName(),
+               record.getLevel().getName(),
+               record.getThreadID(),
+               record.getMessage() + stringWriter.toString()
         });
     }
 
